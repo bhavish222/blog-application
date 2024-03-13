@@ -1,30 +1,22 @@
-package com.mountblue.io.blogapplication.entity;
+package io.mountblue.BlogApplication.entity;
+
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "User")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "name")
+    private Long id;
     private String name;
-
-    @Column(name = "email")
     private String email;
-
-    @Column(name = "password")
     private String password;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Posts> posts;
-
-    public User() {
-
-    }
+    public User() {}
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -32,11 +24,11 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -64,6 +56,14 @@ public class User {
         this.password = password;
     }
 
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -71,6 +71,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", posts=" + posts +
                 '}';
     }
 }

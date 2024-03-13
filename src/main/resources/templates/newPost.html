@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Blog</title>
+    <style>
+        body {
+            text-align: center;
+            width: 80%;
+            margin: auto;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid black;
+            background-color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>New/Edit Post</h1>
+    <form th:action="@{/action}" th:object="${form}" method="POST">
+        <input class="field-input" type="text" th:field="*{title}" placeholder="Title">
+        <br><br>
+        <input class="field-input" type="text" name="tagList" placeholder="Tags">
+        <br><br>
+        <textarea class="field-input" rows="15" th:field="*{content}"></textarea>
+        <br><br>
+        <input class="btn" type="submit" value="Save" name="action">
+        <input class="btn" type="submit" value="Publish" name="action">
+
+    </form>
+
+</body>
+</html>

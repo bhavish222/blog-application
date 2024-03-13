@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog Application</title>
+    <style>
+        body {
+            text-align: center;
+            width: 80%;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="title">
+            <h1>My Blog Application</h1>
+        </div>
+
+    </header>
+    <main id="articles-container" class="articles-container">
+        <div th:each="post : ${posts}" value="${post}" th:text="${post.title}">
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

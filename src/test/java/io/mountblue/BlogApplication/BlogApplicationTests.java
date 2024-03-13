@@ -1,4 +1,4 @@
-package com.mountblue.io.blogapplication;
+package io.mountblue.BlogApplication;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
