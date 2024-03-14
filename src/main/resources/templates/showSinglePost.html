@@ -40,6 +40,25 @@
             <form th:action="@{'/deletepost/post' + ${post.id}}" method="post">
                 <button type="submit">Delete Post</button>
             </form>
+            <br>
+            <div>
+                <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post">
+                    <input type="text" th:name="commentname">
+                    <button type="submit">Post Comment</button>
+                </form>
+            </div>
+            <div>
+                <div th:each="comment : ${post.getComments()}">
+                    <p>name : </p>
+                    <p th:text="${comment.getComment()}"/>
+                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" method="post">
+                        <input type="submit" value="Update"/>
+                    </form>
+                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" method="post">
+                        <input type="submit" value="Delete"/>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 </body>

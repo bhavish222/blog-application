@@ -1,6 +1,7 @@
 package io.mountblue.BlogApplication.controller;
 
 import io.mountblue.BlogApplication.dao.ServiceImplementation;
+import io.mountblue.BlogApplication.entity.Comment;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.entity.User;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 @Controller
 public class PostController {
@@ -40,6 +42,7 @@ public class PostController {
             @RequestParam("tagList") String tagsString,
             @RequestParam("action") String action
     ) {
+        Post existingPost = serviceImplementation.findPostById(post.getId());
         String[] tagNames = tagsString.split(",");
         List<Tag> tags = new ArrayList<>();
         for (String tagName : tagNames) {
@@ -48,8 +51,15 @@ public class PostController {
             tags.add(tag);
         }
         post.setTags(tags);
-        if(action.equals("Publish"))
+        System.out.println(tags);
+        if(action.equals("Publish")) {
             post.setCreatedAt(LocalDateTime.now());
+            post.setPublishedAt(LocalDateTime.now());
+        }
+        else {
+            post.setPublishedAt(existingPost.getPublishedAt());
+            post.setCreatedAt(existingPost.getCreatedAt());
+        }
         post.setUpdatedAt(LocalDateTime.now());
         serviceImplementation.save(post);
         return "redirect:/";
@@ -98,4 +108,38 @@ public class PostController {
         return "redirect:/";
     }
 
+    @PostMapping("/postcomment/post{post_id}")
+    public String postComment(
+            @PathVariable("post_id") Long id,
+            @RequestParam("commentname") String commentname
+    ) {
+        Post post = serviceImplementation.findPostById(id);
+        List<Comment> listOfComment = post.getComments();
+        Comment comment = new Comment();
+        comment.setComment(commentname);
+        listOfComment.add(comment);
+        post.setComments(listOfComment);
+        comment.setPost(post);
+        serviceImplementation.save(post);
+        return "redirect:/post"+post.getId();
+    }
+
+    @PostMapping("/updatecomment/comment{comment_id}")
+    public String updateComm0ent(
+            @PathVariable("comment_id") Long id
+    ) {
+        Comment comment = serviceImplementation.findCommentById(id);
+
+        return "";
+    }
+
+    @PostMapping("/deletecomment/comment{comment_id}")
+    public String deleteComment(
+            @PathVariable("comment_id") Long id
+    ) {
+        Comment comment = serviceImplementation.findCommentById(id);
+        Post post = comment.getPost();
+        serviceImplementation.deleteCommentById(id);
+        return "redirect:/post"+post.getId();
+    }
 }

@@ -2,6 +2,7 @@ package io.mountblue.BlogApplication.dao;
 
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.entity.Comment;
 import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,18 @@ public class ServiceImplementation{
         postRepository.save(post);
     }
     public List<Post> showAllPosts() {
-        List<Post> allPosts=postRepository.findAll();
-        return allPosts;
+        return postRepository.findAll();
     }
     public Post findPostById(Long id){
         return postRepository.findPostById(id);
     }
     public void deletePostById(Long id) {
         postRepository.deleteById(id);
+    }
+    public Comment findCommentById(Long id) {
+        return commentRepository.findCommentById(id);
+    }
+    public void deleteCommentById(Long id) {
+        commentRepository.deleteById(id);
     }
 }
