@@ -150,18 +150,6 @@ public class Post {
     public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
-
-    public void setTagsFromString(String tagsString) {
-        String[] tagNames = tagsString.split("\\s*,\\s*");
-        List<Tag> tags = new ArrayList<>();
-        for (String tagName : tagNames) {
-            Tag tag = new Tag();
-            tag.setName(tagName);
-            tags.add(tag);
-        }
-        this.tags = tags;
-    }
-
     @Override
     public String toString() {
         return "Post{" +

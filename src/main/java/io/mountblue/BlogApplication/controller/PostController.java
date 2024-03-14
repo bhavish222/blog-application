@@ -37,7 +37,8 @@ public class PostController {
     @PostMapping("/savepost")
     public String saveForm(
             @ModelAttribute("post") Post post,
-            @RequestParam("tagList") String tagsString
+            @RequestParam("tagList") String tagsString,
+            @RequestParam("action") String action
     ) {
         String[] tagNames = tagsString.split(",");
         List<Tag> tags = new ArrayList<>();
@@ -47,6 +48,9 @@ public class PostController {
             tags.add(tag);
         }
         post.setTags(tags);
+        if(action.equals("Publish"))
+            post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
         serviceImplementation.save(post);
         return "redirect:/";
     }
@@ -67,7 +71,31 @@ public class PostController {
             Model model
     ) {
         Post post = serviceImplementation.findPostById(id);
+        StringBuilder tagListBuilder = new StringBuilder();
+        List<Tag> tags = post.getTags();
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                Tag tag = tags.get(i);
+                if (tag != null) {
+                    tagListBuilder.append(tag.getName());
+                    if (i < tags.size() - 1) {
+                        tagListBuilder.append(", ");
+                    }
+                }
+            }
+        }
+        String tagsList = tagListBuilder.toString();
         model.addAttribute("post", post);
+        model.addAttribute("tagsList", tagsList);
         return "newPost";
     }
+
+    @PostMapping("/deletepost/post{post_id}")
+    public String deletePost(
+            @PathVariable("post_id") Long id
+    ) {
+        serviceImplementation.deletePostById(id);
+        return "redirect:/";
+    }
+
 }

@@ -39,4 +39,7 @@ public class ServiceImplementation{
     public Post findPostById(Long id){
         return postRepository.findPostById(id);
     }
+    public void deletePostById(Long id) {
+        postRepository.deleteById(id);
+    }
 }

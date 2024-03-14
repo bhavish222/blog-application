@@ -36,6 +36,10 @@
             <form th:action="@{'/editpost/post' + ${post.id}}" method="get">
                 <button type="submit">Edit Post</button>
             </form>
+            <br>
+            <form th:action="@{'/deletepost/post' + ${post.id}}" method="post">
+                <button type="submit">Delete Post</button>
+            </form>
         </main>
     </div>
 </body>
