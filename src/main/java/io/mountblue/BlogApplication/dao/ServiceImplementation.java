@@ -28,29 +28,14 @@ public class ServiceImplementation{
         this.commentRepository = commentRepository;
     }
 
-    public List<Post> showPosts() {
-        List<Post> postData = postRepository.findAll();
-        return postData;
-    }
-
     public void save(Post post) {
         postRepository.save(post);
     }
-
-    public void saveTag(Tag tag) {
-        tagRepository.save(tag);
-    }
-
     public List<Post> showAllPosts() {
         List<Post> allPosts=postRepository.findAll();
         return allPosts;
     }
-    public void publish(Long id, boolean isPublished) {
-        postRepository.updateIsPublishedById(id, isPublished);
+    public Post findPostById(Long id){
+        return postRepository.findPostById(id);
     }
-
-    public Post findPostByTitleAndContent(String title, String content) {
-        return postRepository.findPostByTitleAndContent(title, content);
-    }
-
 }

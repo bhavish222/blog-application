@@ -26,7 +26,7 @@
 </head>
 <body>
     <h1>New/Edit Post</h1>
-    <form th:action="@{/action}" th:object="${form}" method="POST">
+    <form th:action="@{/savepost}" th:object="${form}" method="POST">
         <input class="field-input" type="text" th:field="*{title}" placeholder="Title">
         <br><br>
         <input class="field-input" type="text" name="tagList" placeholder="Tags">
@@ -35,8 +35,6 @@
         <br><br>
         <input class="btn" type="submit" value="Save" name="action">
         <input class="btn" type="submit" value="Publish" name="action">
-
     </form>
-
 </body>
 </html>

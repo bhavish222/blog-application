@@ -22,7 +22,7 @@ public class PostController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<Post> posts = serviceImplementation.showPosts();
+        List<Post> posts = serviceImplementation.showAllPosts();
         model.addAttribute("posts", posts);
         return "landingPage";
     }
@@ -33,31 +33,30 @@ public class PostController {
         return "newPost";
     }
 
-    @PostMapping("/action")
-    public String saveForm(@ModelAttribute("form") Post post, @RequestParam String action, @RequestParam("tagList") String tagsString) {
-        if ("Publish".equals(action)) {
-            Post existingPost = serviceImplementation.findPostByTitleAndContent(post.getTitle(), post.getContent());
-            if (existingPost != null) {
-                serviceImplementation.publish(existingPost.getId(), true);
-                return "landingPage";
-            }
-            // If the post doesn't exist, proceed to publish the submitted post
-            post.setIs_published(true);
-            post.setPublished_at(LocalDateTime.now());
-        }
-        else if ("Save".equals(action)) {
-            post.setIs_published(false);
-        }
+    @PostMapping("/savepost")
+    public String saveForm(
+            @ModelAttribute("form") Post post,
+            @RequestParam("tagList") String tagsString
+    ) {
         String[] tagNames = tagsString.split(",");
         List<Tag> tags = new ArrayList<>();
         for (String tagName : tagNames) {
             Tag tag = new Tag();
-            tag.setName(tagName);
+            tag.setName(tagName.trim());
             tags.add(tag);
         }
         post.setTags(tags);
         serviceImplementation.save(post);
         return "redirect:/";
+    }
+
+    @GetMapping("/post{post_id}")
+    public String showOnePost(
+            @PathVariable("post_id") Long id,Model model
+    ) {
+        Post post=serviceImplementation.findPostById(id);
+        model.addAttribute("post",post);
+        return "showPost";
     }
 
 }
