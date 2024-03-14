@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            text-align: center;
+            width: 80%;
+            margin: auto;
+        }
+        button {
+            padding: 10px 20px;
+            border: 1px solid black;
+            background-color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title">
+                <h1>My Blog Application</h1>
+            </div>
+        </header>
+        <main id="articles-container" class="articles-container">
+            <h2 th:value="${post.title}" th:text="${post.title}"/>
+            <h4 th:value="${post.author}" th:text="${post.author}" />
+            <p th:text="${post.content}"/>
+
+            <p>Tags:
+                <span th:each="tag : ${post.tags}" th:text="${tag.name} + ', ' "  />
+            </p>
+
+            <form th:action="@{'/editpost/post' + ${post.id}}" method="get">
+                <button type="submit">Edit Post</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

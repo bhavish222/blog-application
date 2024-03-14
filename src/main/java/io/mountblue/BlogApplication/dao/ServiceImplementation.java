@@ -2,6 +2,7 @@ package io.mountblue.BlogApplication.dao;
 
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

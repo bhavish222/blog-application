@@ -161,4 +161,21 @@ public class Post {
         }
         this.tags = tags;
     }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", excerpt='" + excerpt + '\'' +
+                ", content='" + content + '\'' +
+                ", author=" + author +
+                ", isPublished=" + isPublished +
+                ", publishedAt=" + publishedAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", comments=" + comments +
+                ", tags=" + tags +
+                '}';
+    }
 }

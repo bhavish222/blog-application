@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>New Blog</title>
+    <title>New/Edit Post</title>
     <style>
         body {
             text-align: center;
@@ -25,16 +25,16 @@
     </style>
 </head>
 <body>
-    <h1>New/Edit Post</h1>
-    <form th:action="@{/savepost}" th:object="${form}" method="POST">
-        <input class="field-input" type="text" th:field="*{title}" placeholder="Title">
-        <br><br>
-        <input class="field-input" type="text" name="tagList" placeholder="Tags">
-        <br><br>
-        <textarea class="field-input" rows="15" th:field="*{content}"></textarea>
-        <br><br>
-        <input class="btn" type="submit" value="Save" name="action">
-        <input class="btn" type="submit" value="Publish" name="action">
-    </form>
+<h1>New/Edit Post</h1>
+<form th:action="@{/savepost}" th:object="${post}" method="POST">
+    <input type="hidden" th:if="${post}" th:field="*{id}" />
+    <input class="field-input" type="text" th:field="*{title}" placeholder="Title">
+    <br><br>
+    <input class="field-input" type="text" name="tagList" placeholder="Tags" th:value="${post != null} ? ${tagsString} : '' ">
+    <br><br>
+    <textarea class="field-input" rows="15" th:field="*{content}" placeholder="Content" th:text="${post != null} ? ${post.content} : ''"></textarea>
+    <br><br>
+    <input class="btn" type="submit" th:value="${post.id != null} ? 'Update' : 'Publish'" name="action">
+</form>
 </body>
 </html>
