@@ -27,8 +27,8 @@
 <body>
 <h1>New/Edit Post</h1>
 <form th:action="@{/savepost}" th:object="${post}" method="POST">
-    <input type="hidden" th:if="${post}" th:field="*{id}" />
-    <input class="field-input" type="text" th:field="*{title}" placeholder="Title">
+    <input type="hidden" name="postId" th:if="${post}" th:field="*{id}" />
+    <input class="field-input" type="text" name="title" th:field="*{title}" placeholder="Title">
     <br><br>
     <input class="field-input" type="text" name="tagList" placeholder="Tags" th:value="${post != null} ? ${tagsList} : '' ">
     <br><br>

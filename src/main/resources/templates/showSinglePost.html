@@ -31,9 +31,10 @@
 
             <p>Tags:
                 <span th:each="tag : ${post.tags}" th:text="${tag.name} + ', ' "  />
+<!--                <span th:text="${tagsList}"/>-->
             </p>
 
-            <form th:action="@{'/editpost/post' + ${post.id}}" method="get">
+            <form th:action="@{'/editpost/post' + ${post.id}}" method="post">
                 <button type="submit">Edit Post</button>
             </form>
             <br>
@@ -43,19 +44,20 @@
             <br>
             <div>
                 <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post">
-                    <input type="text" th:name="commentname">
-                    <button type="submit">Post Comment</button>
+                    <input type="text" th:value="${commentname}" name="commentname" required>
+                    <input type="hidden" name="commentId" th:value="${commentId}">
+                    <input type="submit" name="action" value="Comment">
                 </form>
             </div>
             <div>
                 <div th:each="comment : ${post.getComments()}">
                     <p>name : </p>
                     <p th:text="${comment.getComment()}"/>
-                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" method="post">
-                        <input type="submit" value="Update"/>
+                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" th:object="${comment}" method="post">
+                        <button type="submit" name="action">Update Comment</button>
                     </form>
-                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" method="post">
-                        <input type="submit" value="Delete"/>
+                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" th:object="${comment}" method="post">
+                        <button type="submit" name="action">Delete Comment</button>
                     </form>
                 </div>
             </div>

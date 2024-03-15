@@ -4,7 +4,6 @@ import io.mountblue.BlogApplication.dao.ServiceImplementation;
 import io.mountblue.BlogApplication.entity.Comment;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
-import io.mountblue.BlogApplication.entity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletionException;
+import java.util.LinkedHashSet;
 
 @Controller
 public class PostController {
@@ -44,26 +43,31 @@ public class PostController {
     ) {
         Post existingPost = serviceImplementation.findPostById(post.getId());
         String[] tagNames = tagsString.split(",");
-        List<Tag> tags = new ArrayList<>();
+        LinkedHashSet<Tag> uniqueTags = new LinkedHashSet<>();
         for (String tagName : tagNames) {
             Tag tag = new Tag();
             tag.setName(tagName.trim());
-            tags.add(tag);
+            uniqueTags.add(tag);
         }
-        post.setTags(tags);
-        System.out.println(tags);
-        if(action.equals("Publish")) {
+
+        if (existingPost != null) {
+            uniqueTags.addAll(existingPost.getTags());
+            post.setPublishedAt(existingPost.getPublishedAt());
+            post.setCreatedAt(existingPost.getCreatedAt());
+        } else {
             post.setCreatedAt(LocalDateTime.now());
             post.setPublishedAt(LocalDateTime.now());
         }
-        else {
-            post.setPublishedAt(existingPost.getPublishedAt());
-            post.setCreatedAt(existingPost.getCreatedAt());
-        }
+
+        post.setTags(new ArrayList<>(uniqueTags));
         post.setUpdatedAt(LocalDateTime.now());
+
         serviceImplementation.save(post);
+
         return "redirect:/";
     }
+
+
 
     @GetMapping("/post{post_id}")
     public String showOnePost(
@@ -75,28 +79,25 @@ public class PostController {
         return "showSinglePost";
     }
 
-    @GetMapping("/editpost/post{post_id}")
+    @PostMapping("/editpost/post{post_id}")
     public String editPost(
             @PathVariable("post_id") Long id,
             Model model
     ) {
         Post post = serviceImplementation.findPostById(id);
+        List<Tag> listOfTags = post.getTags();
         StringBuilder tagListBuilder = new StringBuilder();
         List<Tag> tags = post.getTags();
         if (tags != null) {
-            for (int i = 0; i < tags.size(); i++) {
-                Tag tag = tags.get(i);
-                if (tag != null) {
-                    tagListBuilder.append(tag.getName());
-                    if (i < tags.size() - 1) {
-                        tagListBuilder.append(", ");
-                    }
-                }
+            for(Tag tag : tags) {
+                tagListBuilder.append(tag.getName()).append(",");
             }
         }
         String tagsList = tagListBuilder.toString();
+        post.setUpdatedAt(LocalDateTime.now());
         model.addAttribute("post", post);
         model.addAttribute("tagsList", tagsList);
+        System.out.println(tagsList);
         return "newPost";
     }
 
@@ -111,28 +112,26 @@ public class PostController {
     @PostMapping("/postcomment/post{post_id}")
     public String postComment(
             @PathVariable("post_id") Long id,
-            @RequestParam("commentname") String commentname
+            @RequestParam(name = "commentId", required = false) Long commentId,
+            @RequestParam(name = "commentname") String commentname,
+            Model model
     ) {
         Post post = serviceImplementation.findPostById(id);
         List<Comment> listOfComment = post.getComments();
-        Comment comment = new Comment();
+        Comment comment;
+        if(commentId == null) {
+            comment = new Comment();
+        } else {
+            comment = serviceImplementation.findCommentById(commentId);
+        }
         comment.setComment(commentname);
         listOfComment.add(comment);
         post.setComments(listOfComment);
         comment.setPost(post);
         serviceImplementation.save(post);
+        model.addAttribute("commentId",comment.getId());
         return "redirect:/post"+post.getId();
     }
-
-    @PostMapping("/updatecomment/comment{comment_id}")
-    public String updateComm0ent(
-            @PathVariable("comment_id") Long id
-    ) {
-        Comment comment = serviceImplementation.findCommentById(id);
-
-        return "";
-    }
-
     @PostMapping("/deletecomment/comment{comment_id}")
     public String deleteComment(
             @PathVariable("comment_id") Long id
@@ -142,4 +141,29 @@ public class PostController {
         serviceImplementation.deleteCommentById(id);
         return "redirect:/post"+post.getId();
     }
+
+    @PostMapping("/updatecomment/comment{comment_id}")
+    public String updateComment(
+        @PathVariable("comment_id") Long id,
+        Model model
+    ) {
+        Comment comment = serviceImplementation.findCommentById(id);
+        Post post = comment.getPost();
+        model.addAttribute("post", post);
+        model.addAttribute("comment", comment);
+        model.addAttribute("commentId",comment.getId());
+        model.addAttribute("commentname", comment.getComment());
+        return "showSinglePost";
+    }
 }
+
+
+//            for (int i = 0; i < tags.size(); i++) {
+//                Tag tag = tags.get(i);
+//                if (tag != null) {
+//                    tagListBuilder.append(tag.getName());
+//                    if (i < tags.size() - 1) {
+//                        tagListBuilder.append(", ");
+//                    }
+//                }
+//            }

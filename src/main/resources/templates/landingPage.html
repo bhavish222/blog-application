@@ -20,6 +20,7 @@
             margin: 10px;
             width: 550px;
             max-height: 195px;
+            min-height: 195px;
             overflow: hidden;
         }
         a {
@@ -35,6 +36,11 @@
         <div class="title">
             <h1>My Blog Application</h1>
         </div>
+        <span>
+            <a th:href="@{/newpost}">
+                Create Blog
+            </a>
+        </span>
     </header>
     <main id="articles-container" class="articles-container">
         <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
