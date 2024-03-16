@@ -1,6 +1,6 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.ServiceImplementation;
+import io.mountblue.BlogApplication.dao.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import org.springframework.stereotype.Controller;
@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class SearchController {
-    private ServiceImplementation serviceImplementation;
+public class SearchAndSortController {
+    private PostServiceImplementation postServiceImplementation;
 
-    public SearchController(ServiceImplementation serviceImplementation) {
-        this.serviceImplementation = serviceImplementation;
+    public SearchAndSortController(PostServiceImplementation postServiceImplementation) {
+        this.postServiceImplementation = postServiceImplementation;
     }
 
     @GetMapping("/search")
@@ -24,12 +24,16 @@ public class SearchController {
             @RequestParam(name = "searchBarInput") String searchBarInput,
             Model model
     ) {
-        List<Post> allPostsList = serviceImplementation.findAllPosts();
+        List<Post> allPostsList = postServiceImplementation.findAllPosts();
         List<Post> filteredPostBasedOnSearch = new ArrayList<>();
         toFindAllPostsForSearch(allPostsList, filteredPostBasedOnSearch, searchBarInput);
         model.addAttribute("posts", filteredPostBasedOnSearch);
         return "landingPage";
     }
+
+//    private String resettingSorting(Model model) {
+//        return "";
+//    }
 
     private void toFindAllPostsForSearch(List<Post> allPostsList, List<Post> filteredPostBasedOnSearch, String searchBarInput) {
         for(Post post : allPostsList) {
@@ -49,4 +53,21 @@ public class SearchController {
             }
         }
     }
+
+    @GetMapping("/sort")
+    public String index(
+            @RequestParam(value = "sort", defaultValue = "newest", required = false) String sort,
+            Model model
+    ) {
+
+        List<Post> posts;
+        if (sort.equals("newest")) {
+            posts = postServiceImplementation.getAllPostsSortedByDate();
+        } else {
+            posts = postServiceImplementation.getAllPostsSortedByOldestDate();
+        }
+        model.addAttribute("posts", posts);
+        return "landingPage";
+    }
+
 }

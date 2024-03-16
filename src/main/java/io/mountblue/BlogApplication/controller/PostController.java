@@ -1,9 +1,9 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.ServiceImplementation;
-import io.mountblue.BlogApplication.entity.Comment;
+import io.mountblue.BlogApplication.dao.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,17 @@ import java.util.LinkedHashSet;
 @Controller
 public class PostController {
 
-    private ServiceImplementation serviceImplementation;
+    private PostServiceImplementation postServiceImplementation;
 
-    public PostController(ServiceImplementation serviceImplementation){
-        this.serviceImplementation = serviceImplementation;
+    public PostController(PostServiceImplementation postServiceImplementation){
+        this.postServiceImplementation = postServiceImplementation;
+    }
+
+    @GetMapping("/")
+    public String index(Model model) {
+        List<Post> posts = postServiceImplementation.getAllPostsSortedByDate();
+        model.addAttribute("posts", posts);
+        return "landingPage";
     }
 
     @GetMapping("/newpost")
@@ -33,7 +40,8 @@ public class PostController {
             @ModelAttribute("post") Post post,
             @RequestParam("tagList") String tagsString
     ) {
-        Post existingPost = serviceImplementation.findPostById(post.getId());
+        post.setIs_published(true);
+        Post existingPost = postServiceImplementation.findPostById(post.getId());
         String[] tagNames = tagsString.split(",");
         LinkedHashSet<Tag> uniqueTags = new LinkedHashSet<>();
         for (String tagName : tagNames) {
@@ -53,8 +61,7 @@ public class PostController {
         post.setTags(new ArrayList<>(uniqueTags));
         post.setUpdatedAt(LocalDateTime.now());
 
-        serviceImplementation.save(post);
-
+        postServiceImplementation.save(post);
         return "redirect:/";
     }
     @GetMapping("/post{post_id}")
@@ -62,7 +69,7 @@ public class PostController {
             @PathVariable("post_id") Long id,
             Model model
     ) {
-        Post post = serviceImplementation.findPostById(id);
+        Post post = postServiceImplementation.findPostById(id);
         model.addAttribute("post",post);
         return "showSinglePost";
     }
@@ -72,7 +79,7 @@ public class PostController {
             @PathVariable("post_id") Long id,
             Model model
     ) {
-        Post post = serviceImplementation.findPostById(id);
+        Post post = postServiceImplementation.findPostById(id);
         List<Tag> listOfTags = post.getTags();
         StringBuilder tagListBuilder = new StringBuilder();
         List<Tag> tags = post.getTags();
@@ -93,7 +100,7 @@ public class PostController {
     public String deletePost(
             @PathVariable("post_id") Long id
     ) {
-        serviceImplementation.deletePostById(id);
+        postServiceImplementation.deletePostById(id);
         return "redirect:/";
     }
 }

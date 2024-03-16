@@ -1,0 +1,18 @@
+body {
+    text-align: center;
+    width: 80%;
+    margin: auto;
+}
+
+.field-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: 1px solid black;
+    background-color: white;
+    cursor: pointer;
+}

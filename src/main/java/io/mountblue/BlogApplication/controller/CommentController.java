@@ -1,6 +1,6 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.ServiceImplementation;
+import io.mountblue.BlogApplication.dao.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Comment;
 import io.mountblue.BlogApplication.entity.Post;
 import org.springframework.stereotype.Controller;
@@ -13,9 +13,9 @@ import java.util.List;
 
 @Controller
 public class CommentController {
-    public ServiceImplementation serviceImplementation;
-    public CommentController(ServiceImplementation serviceImplementation) {
-        this.serviceImplementation = serviceImplementation;
+    public PostServiceImplementation postServiceImplementation;
+    public CommentController(PostServiceImplementation postServiceImplementation) {
+        this.postServiceImplementation = postServiceImplementation;
     }
     @PostMapping("/postcomment/post{post_id}")
     public String postComment(
@@ -24,19 +24,19 @@ public class CommentController {
             @RequestParam(name = "commentname") String commentname,
             Model model
     ) {
-        Post post = serviceImplementation.findPostById(id);
+        Post post = postServiceImplementation.findPostById(id);
         List<Comment> listOfComment = post.getComments();
         Comment comment;
         if(commentId == null) {
             comment = new Comment();
         } else {
-            comment = serviceImplementation.findCommentById(commentId);
+            comment = postServiceImplementation.findCommentById(commentId);
         }
         comment.setComment(commentname);
         listOfComment.add(comment);
         post.setComments(listOfComment);
         comment.setPost(post);
-        serviceImplementation.save(post);
+        postServiceImplementation.save(post);
         model.addAttribute("commentId",comment.getId());
         return "redirect:/post"+post.getId();
     }
@@ -44,9 +44,9 @@ public class CommentController {
     public String deleteComment(
             @PathVariable("comment_id") Long id
     ) {
-        Comment comment = serviceImplementation.findCommentById(id);
+        Comment comment = postServiceImplementation.findCommentById(id);
         Post post = comment.getPost();
-        serviceImplementation.deleteCommentById(id);
+        postServiceImplementation.deleteCommentById(id);
         return "redirect:/post"+post.getId();
     }
 
@@ -55,7 +55,7 @@ public class CommentController {
             @PathVariable("comment_id") Long id,
             Model model
     ) {
-        Comment comment = serviceImplementation.findCommentById(id);
+        Comment comment = postServiceImplementation.findCommentById(id);
         Post post = comment.getPost();
         model.addAttribute("post", post);
         model.addAttribute("comment", comment);
