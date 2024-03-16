@@ -33,7 +33,7 @@ public class ServiceImplementation{
     public void save(Post post) {
         postRepository.save(post);
     }
-    public List<Post> showAllPosts() {
+    public List<Post> findAllPosts() {
         return postRepository.findAll();
     }
     public Post findPostById(Long id){
@@ -47,5 +47,11 @@ public class ServiceImplementation{
     }
     public void deleteCommentById(Long id) {
         commentRepository.deleteById(id);
+    }
+    public List<Post> getAllPostsSortedByDate() {
+        return postRepository.findAllByOrderByPublishedAtDesc();
+    }
+    public List<Post> getAllPostsSortedByOldestDate() {
+        return postRepository.findAllByOrderByPublishedAtAsc();
     }
 }
