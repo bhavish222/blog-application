@@ -19,7 +19,6 @@
 
             <p>Tags:
                 <span th:each="tag : ${post.tags}" th:text="${tag.name} + ', ' "  />
-<!--                <span th:text="${tagsList}"/>-->
             </p>
 
             <form th:action="@{'/editpost/post' + ${post.id}}" method="post">

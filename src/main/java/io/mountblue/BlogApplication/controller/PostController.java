@@ -1,9 +1,8 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.PostServiceImplementation;
+import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedHashSet;
 
 @Controller
 public class PostController {
@@ -24,7 +22,8 @@ public class PostController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<Post> posts = postServiceImplementation.getAllPostsSortedByDate();
+        List<Post> posts = postServiceImplementation.findAllPosts();
+        posts = postServiceImplementation.getPostsSortedByDate(posts);
         model.addAttribute("posts", posts);
         return "landingPage";
     }
@@ -43,14 +42,14 @@ public class PostController {
         post.setIs_published(true);
         Post existingPost = postServiceImplementation.findPostById(post.getId());
         String[] tagNames = tagsString.split(",");
-        LinkedHashSet<Tag> uniqueTags = new LinkedHashSet<>();
+        List<Tag> tags= new ArrayList<>();
         for (String tagName : tagNames) {
             Tag tag = new Tag();
             tag.setName(tagName.trim());
-            uniqueTags.add(tag);
+            tags.add(tag);
         }
         if (existingPost != null) {
-            uniqueTags.addAll(existingPost.getTags());
+            tags.addAll(existingPost.getTags());
             post.setPublishedAt(existingPost.getPublishedAt());
             post.setCreatedAt(existingPost.getCreatedAt());
         } else {
@@ -58,7 +57,7 @@ public class PostController {
             post.setPublishedAt(LocalDateTime.now());
         }
 
-        post.setTags(new ArrayList<>(uniqueTags));
+        post.setTags(new ArrayList<>(tags));
         post.setUpdatedAt(LocalDateTime.now());
 
         postServiceImplementation.save(post);
@@ -80,19 +79,10 @@ public class PostController {
             Model model
     ) {
         Post post = postServiceImplementation.findPostById(id);
-        List<Tag> listOfTags = post.getTags();
-        StringBuilder tagListBuilder = new StringBuilder();
-        List<Tag> tags = post.getTags();
-        if (tags != null) {
-            for(Tag tag : tags) {
-                tagListBuilder.append(tag.getName()).append(",");
-            }
-        }
-        String tagsList = tagListBuilder.toString();
+        String tagsList = postServiceImplementation.findTagsOfPostToString(post);
         post.setUpdatedAt(LocalDateTime.now());
         model.addAttribute("post", post);
         model.addAttribute("tagsList", tagsList);
-        System.out.println(tagsList);
         return "newPost";
     }
 

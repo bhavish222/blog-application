@@ -1,6 +1,7 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.PostServiceImplementation;
+import io.mountblue.BlogApplication.services.CommentServiceImplementation;
+import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Comment;
 import io.mountblue.BlogApplication.entity.Post;
 import org.springframework.stereotype.Controller;
@@ -14,40 +15,32 @@ import java.util.List;
 @Controller
 public class CommentController {
     public PostServiceImplementation postServiceImplementation;
-    public CommentController(PostServiceImplementation postServiceImplementation) {
+    public CommentServiceImplementation commentServiceImplementation;
+    public CommentController(PostServiceImplementation postServiceImplementation, CommentServiceImplementation commentServiceImplementation) {
         this.postServiceImplementation = postServiceImplementation;
+        this.commentServiceImplementation = commentServiceImplementation;
     }
     @PostMapping("/postcomment/post{post_id}")
     public String postComment(
-            @PathVariable("post_id") Long id,
+            @PathVariable("post_id") Long postId,
             @RequestParam(name = "commentId", required = false) Long commentId,
-            @RequestParam(name = "commentname") String commentname,
+            @RequestParam(name = "commentname") String commentName,
             Model model
     ) {
-        Post post = postServiceImplementation.findPostById(id);
-        List<Comment> listOfComment = post.getComments();
-        Comment comment;
-        if(commentId == null) {
-            comment = new Comment();
-        } else {
-            comment = postServiceImplementation.findCommentById(commentId);
-        }
-        comment.setComment(commentname);
-        listOfComment.add(comment);
-        post.setComments(listOfComment);
-        comment.setPost(post);
+        Post post = postServiceImplementation.findPostById(postId);
+        Long id = commentServiceImplementation.setCommentsForPost(post, commentId, commentName);
         postServiceImplementation.save(post);
-        model.addAttribute("commentId",comment.getId());
+        model.addAttribute("commentId", id);
         return "redirect:/post"+post.getId();
     }
     @PostMapping("/deletecomment/comment{comment_id}")
     public String deleteComment(
             @PathVariable("comment_id") Long id
     ) {
-        Comment comment = postServiceImplementation.findCommentById(id);
-        Post post = comment.getPost();
-        postServiceImplementation.deleteCommentById(id);
-        return "redirect:/post"+post.getId();
+        Comment comment = commentServiceImplementation.findCommentById(id);
+        Long postId = comment.getPost().getId();
+        commentServiceImplementation.deleteCommentById(id);
+        return "redirect:/post"+postId;
     }
 
     @PostMapping("/updatecomment/comment{comment_id}")
@@ -55,7 +48,7 @@ public class CommentController {
             @PathVariable("comment_id") Long id,
             Model model
     ) {
-        Comment comment = postServiceImplementation.findCommentById(id);
+        Comment comment = commentServiceImplementation.findCommentById(id);
         Post post = comment.getPost();
         model.addAttribute("post", post);
         model.addAttribute("comment", comment);

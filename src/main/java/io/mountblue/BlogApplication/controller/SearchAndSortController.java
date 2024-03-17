@@ -1,11 +1,13 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.dao.PostServiceImplementation;
+import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.services.SearchAndSortServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -14,9 +16,11 @@ import java.util.List;
 @Controller
 public class SearchAndSortController {
     private PostServiceImplementation postServiceImplementation;
+    private SearchAndSortServiceImplementation searchAndSortServiceImplementation;
 
-    public SearchAndSortController(PostServiceImplementation postServiceImplementation) {
+    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation) {
         this.postServiceImplementation = postServiceImplementation;
+        this.searchAndSortServiceImplementation = searchAndSortServiceImplementation;
     }
 
     @GetMapping("/search")
@@ -25,34 +29,12 @@ public class SearchAndSortController {
             Model model
     ) {
         List<Post> allPostsList = postServiceImplementation.findAllPosts();
-        List<Post> filteredPostBasedOnSearch = new ArrayList<>();
-        toFindAllPostsForSearch(allPostsList, filteredPostBasedOnSearch, searchBarInput);
+        List<Post> filteredPostBasedOnSearch = searchAndSortServiceImplementation.toFindAllPostsForSearch(allPostsList, searchBarInput);
+        filteredPostBasedOnSearch = postServiceImplementation.getPostsSortedByDate(filteredPostBasedOnSearch);
         model.addAttribute("posts", filteredPostBasedOnSearch);
         return "landingPage";
     }
 
-//    private String resettingSorting(Model model) {
-//        return "";
-//    }
-
-    private void toFindAllPostsForSearch(List<Post> allPostsList, List<Post> filteredPostBasedOnSearch, String searchBarInput) {
-        for(Post post : allPostsList) {
-            if(post.getTitle().toLowerCase().contains(searchBarInput.toLowerCase())) {
-                filteredPostBasedOnSearch.add(post);
-            }
-            else if(post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
-                filteredPostBasedOnSearch.add(post);
-            }
-            else {
-                for(Tag tag : post.getTags()) {
-                    if(tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
-                        filteredPostBasedOnSearch.add(post);
-                        break;
-                    }
-                }
-            }
-        }
-    }
 
     @GetMapping("/sort")
     public String index(
@@ -60,14 +42,13 @@ public class SearchAndSortController {
             Model model
     ) {
 
-        List<Post> posts;
+        List<Post> posts = postServiceImplementation.findAllPosts();
         if (sort.equals("newest")) {
-            posts = postServiceImplementation.getAllPostsSortedByDate();
+            posts = postServiceImplementation.getPostsSortedByDate(posts);
         } else {
-            posts = postServiceImplementation.getAllPostsSortedByOldestDate();
+            posts = postServiceImplementation.getPostsSortedByOldestDate(posts);
         }
         model.addAttribute("posts", posts);
         return "landingPage";
     }
-
 }

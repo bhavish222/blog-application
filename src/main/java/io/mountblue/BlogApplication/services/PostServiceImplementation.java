@@ -1,7 +1,7 @@
-package io.mountblue.BlogApplication.dao;
+package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
-import io.mountblue.BlogApplication.entity.Comment;
+import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +17,13 @@ public class PostServiceImplementation implements PostService{
     private PostRepository postRepository;
     private TagRepository tagRepository;
     private PostTagRepository postTagRepository;
-    private CommentRepository commentRepository;
 
     @Autowired
-    public PostServiceImplementation(UserRepository userRepository, PostRepository postRepository, TagRepository tagRepository, PostTagRepository postTagRepository, CommentRepository commentRepository) {
+    public PostServiceImplementation(UserRepository userRepository, PostRepository postRepository, TagRepository tagRepository, PostTagRepository postTagRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
         this.postTagRepository = postTagRepository;
-        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -45,19 +43,22 @@ public class PostServiceImplementation implements PostService{
         postRepository.deleteById(id);
     }
     @Override
-    public Comment findCommentById(Long id) {
-        return commentRepository.findCommentById(id);
+    public List<Post> getPostsSortedByDate(List<Post> posts) {
+        return postRepository.findPostsInAndOrderByPublishedAtDesc(posts);
     }
     @Override
-    public void deleteCommentById(Long id) {
-        commentRepository.deleteById(id);
+    public List<Post> getPostsSortedByOldestDate(List<Post> posts) {
+        return postRepository.findPostsInAndOrderByPublishedAtAsc(posts);
     }
     @Override
-    public List<Post> getAllPostsSortedByDate() {
-        return postRepository.findAllByOrderByPublishedAtDesc();
-    }
-    @Override
-    public List<Post> getAllPostsSortedByOldestDate() {
-        return postRepository.findAllByOrderByPublishedAtAsc();
+    public String findTagsOfPostToString(Post post) {
+        List<Tag> listOfTags = post.getTags();
+        StringBuilder tagListBuilder = new StringBuilder();
+        if (listOfTags != null) {
+            for(Tag tag : listOfTags) {
+                tagListBuilder.append(tag.getName()).append(",");
+            }
+        }
+        return tagListBuilder.toString();
     }
 }
