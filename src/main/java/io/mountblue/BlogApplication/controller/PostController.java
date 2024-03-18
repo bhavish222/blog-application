@@ -3,6 +3,7 @@ package io.mountblue.BlogApplication.controller;
 import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.services.TagServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,20 @@ import java.util.List;
 public class PostController {
 
     private PostServiceImplementation postServiceImplementation;
+    private TagServiceImplementation tagServiceImplementation;
 
-    public PostController(PostServiceImplementation postServiceImplementation){
+    public PostController(PostServiceImplementation postServiceImplementation, TagServiceImplementation tagServiceImplementation){
         this.postServiceImplementation = postServiceImplementation;
+        this.tagServiceImplementation = tagServiceImplementation;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         List<Post> posts = postServiceImplementation.findAllPosts();
         posts = postServiceImplementation.getPostsSortedByDate(posts);
+        List<Tag> tagList = tagServiceImplementation.findAllTags();
         model.addAttribute("posts", posts);
+        model.addAttribute("tagList", tagList);
         return "landingPage";
     }
 
@@ -56,7 +61,9 @@ public class PostController {
             post.setCreatedAt(LocalDateTime.now());
             post.setPublishedAt(LocalDateTime.now());
         }
-
+        int currentPostLength = post.getContent().length();
+        String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
+        post.setExcerpt(excerpt);
         post.setTags(new ArrayList<>(tags));
         post.setUpdatedAt(LocalDateTime.now());
 

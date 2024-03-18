@@ -1,9 +1,10 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: whitesmoke;
 }
 
 .container {
-    width: 70%;
+    width: 90%;
     margin: auto;
     padding: 20px;
 }
@@ -11,6 +12,24 @@ body {
 header {
     text-align: center;
     margin-bottom: 20px;
+}
+
+h1 {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+}
+
+.search-field {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+}
+
+.sort-by-form {
+    position: absolute;
+    top: 80px;
+    right: 26px;
 }
 
 header input[type="text"] {
@@ -25,20 +44,33 @@ header button {
 
 main {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    position: relative;
+    top: 80px;
+    justify-content:space-around;
 }
 
 #post-container-div {
-    width: 400px;
+    width: 380px;
     margin: 10px;
     border: 1px solid black;
     padding: 10px 20px;
+    height: 14rem;
     overflow: hidden;
-    max-height: 195px;
-    min-height: 195px;
 }
 a {
     color: black;
     text-decoration: none;
+}
+.aside-blog-posts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.filter-div {
+    border: 1px solid black;
+    width: 220px;
+    overflow-y: scroll;
+    height: 200px;
 }

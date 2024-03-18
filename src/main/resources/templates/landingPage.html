@@ -10,37 +10,66 @@
 <div class="container">
     <header>
         <div class="title">
-            <h1>My Blog Application</h1>
-            <span>
+            <h1><a th:href="@{/}">My Blog Application</a></h1>
+            <span class="search-field">
                 <form th:action="@{/search}" method="get">
                     <input type="text" placeholder="Search Blog" name="searchBarInput"/>
+                    <input type="hidden" name="sort" th:value="${sort}">
                     <button type="submit">Search</button>
                 </form>
             </span>
         </div>
         <span>
             <a th:href="@{/newpost}">
-                Create Blog
+                Write a Blog
             </a>
         </span>
-        <form th:action="@{/sort}" method="get">
+        <form th:action="@{/sort}" method="get" th:object="${posts}" class="sort-by-form">
             <label for="sort">Sort by:</label>
             <select id="sort" name="sort">
                 <option value="newest">Newest first</option>
                 <option value="oldest">Oldest first</option>
             </select>
+            <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
             <button type="submit">Sort</button>
         </form>
     </header>
+    <hr>
     <main id="articles-container" class="articles-container">
-        <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
-            <a th:href="@{'/post' + ${post.id}}">
-                <h2 th:text="${post.title}" />
-                <h4 th:text="${post.author}"/>
-                <h5 th:text="${post.createdAt}" />
-                <div th:text="${post.content}" />
-            </a>
-        </div>
+        <aside class="aside-filter">
+            <form th:action="@{/}" method="get">
+                <div>
+                    <strong>Filters</strong>
+                    <span>
+                    <button type="submit">Apply Filters</button>
+                    </span>
+                </div>
+
+                <h6>
+                    Tags
+                </h6>
+                <div class="filter-div">
+                    <span th:each="tag : ${tagList}" class="tags-span">
+                        <input type="checkbox" name="tagId" th:value="${tag.id}">
+                        <label th:text="${tag.name}"></label>
+                        <br>
+                    </span>
+                </div>
+                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+            </form>
+        </aside>
+        <span>
+            <div class="aside-blog-posts">
+                <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
+                    <a th:href="@{'/post' + ${post.id}}">
+                        <h2 th:text="${post.title}" />
+                        <h4 th:text="${post.author}"/>
+                        <h5 th:text="${post.createdAt}" />
+                        <div th:text="${post.excerpt}" />
+                    </a>
+                </div>
+            </div>
+        </span>
     </main>
 </div>
 </body>

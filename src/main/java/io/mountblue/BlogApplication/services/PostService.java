@@ -13,5 +13,4 @@ public interface PostService {
     List<Post> getPostsSortedByDate(List<Post> post);
     List<Post> getPostsSortedByOldestDate(List<Post> post);
     String findTagsOfPostToString(Post post);
-
 }

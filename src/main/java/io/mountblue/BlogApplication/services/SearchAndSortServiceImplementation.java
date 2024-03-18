@@ -22,15 +22,13 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
             if(post.getTitle().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
-            else if(post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
+            if(post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
-            else {
-                for(Tag tag : post.getTags()) {
-                    if(tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
-                        filteredPostBasedOnSearch.add(post);
-                        break;
-                    }
+            for(Tag tag : post.getTags()) {
+                if(tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
+                    filteredPostBasedOnSearch.add(post);
+                    break;
                 }
             }
         }
