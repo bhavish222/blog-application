@@ -61,12 +61,14 @@ public class SearchAndSortController {
         return "landingPage";
     }
 
-//    @GetMapping("/filter-tags")
-//    public String filterTags(
-//            @RequestParam(name = "tagId") List<Long> tagIds
-//    ) {
-////        List<Post> posts = ;
-//        return "landingPage";
-//    }
+    @GetMapping("/filter-tags")
+    public String filterTags(
+            @RequestParam(name = "tagId") List<Long> tagIds
+    ) {
+        System.out.println(tagIds);
+
+//        List<Post> posts =
+        return "landingPage";
+    }
 
 }

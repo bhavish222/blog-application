@@ -3,6 +3,7 @@ package io.mountblue.BlogApplication.controller;
 import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.services.TagServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,31 +45,9 @@ public class PostController {
             @ModelAttribute("post") Post post,
             @RequestParam("tagList") String tagsString
     ) {
-        post.setIs_published(true);
-        Post existingPost = postServiceImplementation.findPostById(post.getId());
-        String[] tagNames = tagsString.split(",");
-        List<Tag> tags= new ArrayList<>();
-        for (String tagName : tagNames) {
-            Tag tag = new Tag();
-            tag.setName(tagName.trim());
-            tags.add(tag);
-        }
-        if (existingPost != null) {
-            tags.addAll(existingPost.getTags());
-            post.setPublishedAt(existingPost.getPublishedAt());
-            post.setCreatedAt(existingPost.getCreatedAt());
-        } else {
-            post.setCreatedAt(LocalDateTime.now());
-            post.setPublishedAt(LocalDateTime.now());
-        }
-        int currentPostLength = post.getContent().length();
-        String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
-        post.setExcerpt(excerpt);
-        post.setTags(new ArrayList<>(tags));
-        post.setUpdatedAt(LocalDateTime.now());
-
+        postServiceImplementation.saveOrUpdate(post, tagsString);
         postServiceImplementation.save(post);
-        return "redirect:/";
+        return "redirect:/post"+post.getId();
     }
     @GetMapping("/post{post_id}")
     public String showOnePost(

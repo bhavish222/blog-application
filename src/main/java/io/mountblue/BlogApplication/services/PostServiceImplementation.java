@@ -2,10 +2,13 @@ package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,5 +63,58 @@ public class PostServiceImplementation implements PostService{
             }
         }
         return tagListBuilder.toString();
+    }
+
+    @Override
+    public void saveOrUpdate(Post post, String tagsString) {
+        post.setIs_published(true);
+        String[] tagNames = tagsString.split(",");
+        List<Tag> newTags= new ArrayList<>();
+        List<Tag> existingTags = tagRepository.findAll();
+        List<Tag> allUniqueTagsForPost = new ArrayList<>();
+        for (String tagName : tagNames) {
+            Tag tag = new Tag();
+            tag.setName(tagName.trim());
+            newTags.add(tag);
+        }
+
+        for(Tag tag : newTags) {
+            String tagName = tag.getName();
+            boolean checkIfExists = false;
+            for(Tag tempTag : existingTags) {
+                String tempTagName = tempTag.getName();
+                if(tempTagName.equals(tagName)) {
+                    checkIfExists = true;
+                    allUniqueTagsForPost.add(tempTag);
+                    break;
+                }
+            }
+            if(checkIfExists == false) {
+                allUniqueTagsForPost.add(tag);
+            }
+        }
+
+        post.setTags(allUniqueTagsForPost);
+
+        int currentPostLength = post.getContent().length();
+        String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
+        if(post.getId() != null) {
+            Post existingPost = findPostById(post.getId());
+            if(existingPost != null) {
+                existingPost.setTitle(post.getTitle());
+                existingPost.setContent(post.getContent());
+                existingPost.setTags(post.getTags());
+                existingPost.setExcerpt(post.getExcerpt());
+                existingPost.setAuthor(post.getAuthor());
+                existingPost.setPublishedAt(post.getPublishedAt());
+                existingPost.setExcerpt(post.getExcerpt());
+            }
+        } else {
+            post.setCreatedAt(LocalDateTime.now());
+            post.setPublishedAt(LocalDateTime.now());
+//            set author
+        }
+        post.setExcerpt(excerpt);
+        post.setUpdatedAt(LocalDateTime.now());
     }
 }
