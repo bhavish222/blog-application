@@ -31,13 +31,14 @@
                 <option value="oldest">Oldest first</option>
             </select>
             <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+
             <button type="submit">Sort</button>
         </form>
     </header>
     <hr>
     <main id="articles-container" class="articles-container">
         <aside class="aside-filter">
-            <form th:action="@{/}" method="get">
+            <form th:action="@{/filter-tags}" method="get">
                 <div>
                     <strong>Filters</strong>
                     <span>

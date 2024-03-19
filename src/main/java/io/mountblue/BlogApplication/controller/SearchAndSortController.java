@@ -3,6 +3,7 @@ package io.mountblue.BlogApplication.controller;
 import io.mountblue.BlogApplication.services.PostServiceImplementation;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.services.PostTagServiceImplementation;
 import io.mountblue.BlogApplication.services.SearchAndSortServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +16,12 @@ import java.util.List;
 public class SearchAndSortController {
     private PostServiceImplementation postServiceImplementation;
     private SearchAndSortServiceImplementation searchAndSortServiceImplementation;
+    private PostTagServiceImplementation postTagServiceImplementation;
 
-    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation) {
+    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation, PostTagServiceImplementation postTagServiceImplementation) {
         this.postServiceImplementation = postServiceImplementation;
         this.searchAndSortServiceImplementation = searchAndSortServiceImplementation;
+        this.postTagServiceImplementation = postTagServiceImplementation;
     }
 
     @GetMapping("/search")
@@ -63,11 +66,12 @@ public class SearchAndSortController {
 
     @GetMapping("/filter-tags")
     public String filterTags(
-            @RequestParam(name = "tagId") List<Long> tagIds
+            @RequestParam(name = "tagId") List<Tag> tagIds,
+            Model model
     ) {
         System.out.println(tagIds);
-
-//        List<Post> posts =
+        List<Post> posts = postTagServiceImplementation.findAllPostsByTags(tagIds);
+        model.addAttribute("posts", posts);
         return "landingPage";
     }
 

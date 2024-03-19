@@ -14,4 +14,5 @@ public interface PostService {
     List<Post> getPostsSortedByOldestDate(List<Post> post);
     String findTagsOfPostToString(Post post);
     void saveOrUpdate(Post post, String tagsString);
+    List<Post> findPostsByIds(List<Long> postIds);
 }

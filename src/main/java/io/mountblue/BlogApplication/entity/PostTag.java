@@ -2,6 +2,8 @@ package io.mountblue.BlogApplication.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "post_tags")
 public class PostTag {
@@ -15,12 +17,17 @@ public class PostTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
-    public PostTag() {}
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public PostTag(Post post, Tag tag) {
+    public PostTag(Post post, Tag tag, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.post = post;
         this.tag = tag;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
+
+    public PostTag() {}
 
     public Long getId() {
         return id;
@@ -44,5 +51,21 @@ public class PostTag {
 
     public void setTag(Tag tag) {
         this.tag = tag;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

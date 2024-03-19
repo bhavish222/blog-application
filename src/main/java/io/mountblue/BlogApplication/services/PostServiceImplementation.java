@@ -117,4 +117,16 @@ public class PostServiceImplementation implements PostService{
         post.setExcerpt(excerpt);
         post.setUpdatedAt(LocalDateTime.now());
     }
+
+    @Override
+    public List<Post> findPostsByIds(List<Long> postIds) {
+        List<Post> posts = new ArrayList<>();
+        for(Long id : postIds) {
+            Post post = postRepository.findPostById(id);
+            if(!posts.contains(post)) {
+                posts.add(post);
+            }
+        }
+        return posts;
+    }
 }
