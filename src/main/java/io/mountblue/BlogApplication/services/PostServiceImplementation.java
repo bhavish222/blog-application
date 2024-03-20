@@ -6,30 +6,28 @@ import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class PostServiceImplementation implements PostService{
 
-    public PostServiceImplementation() {}
+    public PostServiceImplementation() {
 
-    private UserRepository userRepository;
+    }
     private PostRepository postRepository;
     private TagRepository tagRepository;
-    private PostTagRepository postTagRepository;
 
     @Autowired
-    public PostServiceImplementation(UserRepository userRepository, PostRepository postRepository, TagRepository tagRepository, PostTagRepository postTagRepository) {
-        this.userRepository = userRepository;
+    public PostServiceImplementation(
+            PostRepository postRepository,
+            TagRepository tagRepository
+    ) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
-        this.postTagRepository = postTagRepository;
     }
 
     @Override
@@ -69,18 +67,16 @@ public class PostServiceImplementation implements PostService{
     }
 
     @Override
-    public void saveOrUpdate(Post post, String tagsString) {
-        post.setIs_published(true);
+    public void saveOrUpdate(Post post, String tagsString, String action) {
         String[] tagNames = tagsString.split(",");
         List<Tag> newTags= new ArrayList<>();
-        List<Tag> existingTags = tagRepository.findAll();
-        List<Tag> allUniqueTagsForPost = new ArrayList<>();
         for (String tagName : tagNames) {
             Tag tag = new Tag();
             tag.setName(tagName.trim());
             newTags.add(tag);
         }
-
+        List<Tag> existingTags = tagRepository.findAll();
+        List<Tag> allUniqueTagsForThisPost = new ArrayList<>();
         for(Tag tag : newTags) {
             String tagName = tag.getName();
             boolean checkIfExists = false;
@@ -88,19 +84,27 @@ public class PostServiceImplementation implements PostService{
                 String tempTagName = tempTag.getName();
                 if(tempTagName.equals(tagName)) {
                     checkIfExists = true;
-                    allUniqueTagsForPost.add(tempTag);
+                    allUniqueTagsForThisPost.add(tempTag);
                     break;
                 }
             }
-            if(checkIfExists == false) {
-                allUniqueTagsForPost.add(tag);
+            if(!checkIfExists) {
+                allUniqueTagsForThisPost.add(tag);
             }
         }
-
-        post.setTags(allUniqueTagsForPost);
-
+        post.setTags(allUniqueTagsForThisPost);
         int currentPostLength = post.getContent().length();
         String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
+
+        if(action.equals("Publish")) {
+            post.setCreatedAt(LocalDateTime.now());
+            post.setPublishedAt(LocalDateTime.now());
+            post.setIs_published(true);
+        }
+        User user = new User(1L, "bhavi", "wadhwabhavish46@gmail.com","3001");
+        post.setAuthor(user);
+        post.setExcerpt(excerpt);
+        post.setUpdatedAt(LocalDateTime.now());
         if(post.getId() != null) {
             Post existingPost = findPostById(post.getId());
             if(existingPost != null) {
@@ -112,12 +116,7 @@ public class PostServiceImplementation implements PostService{
                 existingPost.setPublishedAt(post.getPublishedAt());
                 existingPost.setExcerpt(post.getExcerpt());
             }
-        } else {
-            post.setCreatedAt(LocalDateTime.now());
-            post.setPublishedAt(LocalDateTime.now());
         }
-        post.setExcerpt(excerpt);
-        post.setUpdatedAt(LocalDateTime.now());
     }
 
     @Override
@@ -136,7 +135,7 @@ public class PostServiceImplementation implements PostService{
         return postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
     }
 
-    public List<Post> findAllPostsByIdsIn(List<Long> postsIdList) {
+    public List<Post> findAllPostsByIdIn(List<Long> postsIdList) {
         return postRepository.findAllPostsByIdIn(postsIdList);
     }
 }

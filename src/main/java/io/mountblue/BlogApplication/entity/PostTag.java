@@ -1,7 +1,6 @@
 package io.mountblue.BlogApplication.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity

@@ -1,7 +1,6 @@
 package io.mountblue.BlogApplication.entity;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
@@ -18,7 +17,8 @@ public class User {
 
     public User() {}
 
-    public User(String name, String email, String password) {
+    public User(Long id, String name, String email, String password) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -64,14 +64,10 @@ public class User {
         this.posts = posts;
     }
 
-//    @Override
-//    public String toString() {
-//        return "User{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", email='" + email + '\'' +
-//                ", password='" + password + '\'' +
-//                ", posts=" + posts +
-//                '}';
-//    }
+    @Override
+    public String toString() {
+        return "User{" +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

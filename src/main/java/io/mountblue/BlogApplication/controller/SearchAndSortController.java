@@ -7,7 +7,6 @@ import io.mountblue.BlogApplication.entity.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,13 @@ public class SearchAndSortController {
     private TagServiceImplementation tagServiceImplementation;
     private UserServiceImplementation userServiceImplementation;
 
-    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation, PostTagServiceImplementation postTagServiceImplementation, TagServiceImplementation tagServiceImplementation, UserServiceImplementation userServiceImplementation) {
+    public SearchAndSortController(
+            PostServiceImplementation postServiceImplementation,
+            SearchAndSortServiceImplementation searchAndSortServiceImplementation,
+            PostTagServiceImplementation postTagServiceImplementation,
+            TagServiceImplementation tagServiceImplementation,
+            UserServiceImplementation userServiceImplementation
+    ) {
         this.postServiceImplementation = postServiceImplementation;
         this.searchAndSortServiceImplementation = searchAndSortServiceImplementation;
         this.postTagServiceImplementation = postTagServiceImplementation;
@@ -30,8 +35,8 @@ public class SearchAndSortController {
     @GetMapping("/search")
     public String search(
             @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
-            Model model,
-            @RequestParam(value = "sort" ,defaultValue = "newest") String sort
+            @RequestParam(value = "sort" ,defaultValue = "newest") String sort,
+            Model model
     ) {
         List<Post> posts = postServiceImplementation.findAllPosts();
         List<Post> filteredPostBasedOnSearch;
@@ -60,7 +65,7 @@ public class SearchAndSortController {
             @RequestParam(name = "postId") List<Long> postsIdList,
             Model model
     ) {
-        List<Post> posts = postServiceImplementation.findAllPostsByIdsIn(postsIdList);
+        List<Post> posts = postServiceImplementation.findAllPostsByIdIn(postsIdList);
         List<Post> filteredPost = searchAndSortServiceImplementation.toFindAllPostsForSearch(posts, searchBarInput);
         if (sort.equals("newest")) {
             filteredPost = postServiceImplementation.getPostsSortedByDate(filteredPost);
@@ -99,40 +104,11 @@ public class SearchAndSortController {
         if(!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
             postsForDate = postServiceImplementation.findPostsByPublishedAtDateRange(startDateStr, endDateStr);
         }
-        List<Post> posts = new ArrayList<>();
-        if(!postsForTags.isEmpty() && !postsForUser.isEmpty()) {
-            for (Post post : postsForTags) {
-                if (postsForUser.contains(post)) {
-                    posts.add(post);
-                }
-            }
-        }
-        else if(postsForTags.isEmpty() && !postsForUser.isEmpty()) {
-            posts = postsForUser;
-        }
-        else if(!postsForTags.isEmpty()) {
-            posts = postsForTags;
-        }
-        else {
-            posts = postServiceImplementation.findAllPosts();
-        }
 
-        List<Post> allUniquePosts = new ArrayList<>();
-
-        if(!postsForDate.isEmpty()) {
-            for(Post post : posts) {
-                if(postsForDate.contains(post)) {
-                    allUniquePosts.add(post);
-                }
-            }
-        }
-        else {
-            allUniquePosts = posts;
-        }
-
-        List<Post> existingPostsInPage = postServiceImplementation.findAllPostsByIdsIn(postsIdList);
+        List<Post> posts = searchAndSortServiceImplementation.combineFilters(postsForTags, postsForUser, postsForDate);
+        List<Post> existingPostsInPage = postServiceImplementation.findAllPostsByIdIn(postsIdList);
         List<Post> commonPosts = new ArrayList<>();
-        for(Post post : allUniquePosts) {
+        for(Post post : posts) {
             if(existingPostsInPage.contains(post)) {
                 commonPosts.add(post);
             }

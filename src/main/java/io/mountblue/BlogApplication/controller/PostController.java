@@ -9,29 +9,29 @@ import io.mountblue.BlogApplication.services.UserServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class PostController {
-
     private PostServiceImplementation postServiceImplementation;
     private TagServiceImplementation tagServiceImplementation;
     private UserServiceImplementation userServiceImplementation;
 
-
-
-
-    public PostController(PostServiceImplementation postServiceImplementation, TagServiceImplementation tagServiceImplementation, UserServiceImplementation userServiceImplementation){
+    public PostController(
+            PostServiceImplementation postServiceImplementation,
+            TagServiceImplementation tagServiceImplementation,
+            UserServiceImplementation userServiceImplementation
+    ){
         this.postServiceImplementation = postServiceImplementation;
         this.tagServiceImplementation = tagServiceImplementation;
         this.userServiceImplementation = userServiceImplementation;
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(
+            Model model
+    ) {
         List<Post> posts = postServiceImplementation.findAllPosts();
         posts = postServiceImplementation.getPostsSortedByDate(posts);
         List<Tag> tagList = tagServiceImplementation.findAllTags();
@@ -43,7 +43,9 @@ public class PostController {
     }
 
     @GetMapping("/newpost")
-    public String newPost(Model model) {
+    public String newPost(
+            Model model
+    ) {
         model.addAttribute("post", new Post());
         return "newPost";
     }
@@ -51,9 +53,10 @@ public class PostController {
     @PostMapping("/savepost")
     public String saveForm(
             @ModelAttribute("post") Post post,
-            @RequestParam("tagList") String tagsString
+            @RequestParam("tagList") String tagsString,
+            @RequestParam("action") String action
     ) {
-        postServiceImplementation.saveOrUpdate(post, tagsString);
+        postServiceImplementation.saveOrUpdate(post, tagsString, action);
         postServiceImplementation.save(post);
         return "redirect:/post"+post.getId();
     }

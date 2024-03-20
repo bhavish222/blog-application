@@ -98,7 +98,7 @@
                 <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
                     <a th:href="@{'/post' + ${post.id}}">
                         <h2 th:text="${post.title}" />
-<!--                        <h4 th:text="${post.author}"/>-->
+                        <h4 th:text="${post.author.name}"/>
                         <h5 th:text="${post.createdAt}" />
                         <div th:text="${post.excerpt}" />
                     </a>
