@@ -31,7 +31,6 @@
                 <option value="oldest">Oldest first</option>
             </select>
             <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
-
             <button type="submit">Sort</button>
         </form>
     </header>
@@ -39,6 +38,8 @@
     <main id="articles-container" class="articles-container">
         <aside class="aside-filter">
             <form th:action="@{/filter-tags}" method="get">
+                <input type="hidden" name="sort" th:value="${sort}">
+                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
                 <div>
                     <strong>Filters</strong>
                     <span>
@@ -56,7 +57,30 @@
                         <br>
                     </span>
                 </div>
-                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+
+                <h6>
+                    Author
+                </h6>
+                <div class="filter-div">
+                    <span th:each="user : ${userList}" class="tags-span">
+                        <input type="checkbox" name="userId" th:value="${user.id}">
+                        <label th:text="${user.name}"></label>
+                        <br>
+                    </span>
+                </div>
+
+                <h6>
+                    Start Date
+                </h6>
+                <div class="filter-div">
+                    <input type="date" name="startDate">
+                </div>
+                <h6>
+                    End Date
+                </h6>
+                <div class="filter-div">
+                    <input type="date" name="endDate">
+                </div>
             </form>
         </aside>
         <span>
@@ -64,7 +88,7 @@
                 <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
                     <a th:href="@{'/post' + ${post.id}}">
                         <h2 th:text="${post.title}" />
-                        <h4 th:text="${post.author}"/>
+<!--                        <h4 th:text="${post.author}"/>-->
                         <h5 th:text="${post.createdAt}" />
                         <div th:text="${post.excerpt}" />
                     </a>

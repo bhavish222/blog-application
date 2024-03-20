@@ -1,10 +1,9 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.services.PostServiceImplementation;
+import io.mountblue.BlogApplication.entity.User;
+import io.mountblue.BlogApplication.services.*;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
-import io.mountblue.BlogApplication.services.PostTagServiceImplementation;
-import io.mountblue.BlogApplication.services.SearchAndSortServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +16,15 @@ public class SearchAndSortController {
     private PostServiceImplementation postServiceImplementation;
     private SearchAndSortServiceImplementation searchAndSortServiceImplementation;
     private PostTagServiceImplementation postTagServiceImplementation;
+    private TagServiceImplementation tagServiceImplementation;
+    private UserServiceImplementation userServiceImplementation;
 
-    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation, PostTagServiceImplementation postTagServiceImplementation) {
+    public SearchAndSortController(PostServiceImplementation postServiceImplementation, SearchAndSortServiceImplementation searchAndSortServiceImplementation, PostTagServiceImplementation postTagServiceImplementation, TagServiceImplementation tagServiceImplementation, UserServiceImplementation userServiceImplementation) {
         this.postServiceImplementation = postServiceImplementation;
         this.searchAndSortServiceImplementation = searchAndSortServiceImplementation;
         this.postTagServiceImplementation = postTagServiceImplementation;
+        this.tagServiceImplementation = tagServiceImplementation;
+        this.userServiceImplementation = userServiceImplementation;
     }
 
     @GetMapping("/search")
@@ -40,6 +43,10 @@ public class SearchAndSortController {
         }
 
         filteredPostBasedOnSearch = postServiceImplementation.getPostsSortedByDate(filteredPostBasedOnSearch);
+        List<Tag> tagList = tagServiceImplementation.findAllTags();
+        List<User> userList = userServiceImplementation.findAllUsers();
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("userList", userList);
         model.addAttribute("posts", filteredPostBasedOnSearch);
         model.addAttribute("searchBarInput", searchBarInput);
         model.addAttribute("sort", sort);
@@ -59,6 +66,10 @@ public class SearchAndSortController {
         } else {
             filteredPost = postServiceImplementation.getPostsSortedByOldestDate(filteredPost);
         }
+                List<Tag> tagList = tagServiceImplementation.findAllTags();
+        List<User> userList = userServiceImplementation.findAllUsers();
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("userList", userList);
         model.addAttribute("posts", filteredPost);
         model.addAttribute("searchBarInput", searchBarInput);
         return "landingPage";
@@ -66,13 +77,63 @@ public class SearchAndSortController {
 
     @GetMapping("/filter-tags")
     public String filterTags(
-            @RequestParam(name = "tagId") List<Tag> tagIds,
+            @RequestParam(name = "tagId", required = false) List<Tag> tagIds,
+            @RequestParam(name = "userId", required = false) List<User> userIds,
+            @RequestParam(name = "startDate", required = false) String startDateStr,
+            @RequestParam(name = "endDate", required = false) String endDateStr,
+            @RequestParam(value = "sort" ,defaultValue = "newest") String sort,
             Model model
     ) {
-        System.out.println(tagIds);
-        List<Post> posts = postTagServiceImplementation.findAllPostsByTags(tagIds);
-        model.addAttribute("posts", posts);
+        List<Post> postsForTags = new ArrayList<>();
+        List<Post> postsForUser = new ArrayList<>();
+        List<Post> postsForDate = new ArrayList<>();
+        if(tagIds != null) {
+            postsForTags = postTagServiceImplementation.findAllPostsByTags(tagIds);
+        }
+        if(userIds != null) {
+            postsForUser = postServiceImplementation.findPostsByAuthorIn(userIds);
+        }
+        if(!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
+            postsForDate = postServiceImplementation.findPostsByPublishedAtDateRange(startDateStr, endDateStr);
+        }
+        List<Post> posts = new ArrayList<>();
+        if(!postsForTags.isEmpty() && !postsForUser.isEmpty()) {
+            for (Post post : postsForTags) {
+                if (postsForUser.contains(post)) {
+                    posts.add(post);
+                }
+            }
+        }
+        else if(postsForTags.isEmpty() && !postsForUser.isEmpty()) {
+            posts = postsForUser;
+        }
+        else if(!postsForTags.isEmpty()) {
+            posts = postsForTags;
+        }
+        else {
+            posts = postServiceImplementation.findAllPosts();
+        }
+
+        List<Post> allUniquePosts = new ArrayList<>();
+
+        if(!postsForDate.isEmpty()) {
+            for(Post post : posts) {
+                if(postsForDate.contains(post)) {
+                    allUniquePosts.add(post);
+                }
+            }
+        }
+        else {
+            allUniquePosts = posts;
+        }
+
+        List<Tag> tagList = tagServiceImplementation.findAllTags();
+        List<User> userList = userServiceImplementation.findAllUsers();
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("userList", userList);
+
+        allUniquePosts = postServiceImplementation.getPostsSortedByDate(allUniquePosts);
+        model.addAttribute("posts", allUniquePosts);
         return "landingPage";
     }
-
 }

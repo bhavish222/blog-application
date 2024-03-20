@@ -7,8 +7,11 @@ import io.mountblue.BlogApplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -112,21 +115,24 @@ public class PostServiceImplementation implements PostService{
         } else {
             post.setCreatedAt(LocalDateTime.now());
             post.setPublishedAt(LocalDateTime.now());
-//            set author
         }
         post.setExcerpt(excerpt);
         post.setUpdatedAt(LocalDateTime.now());
     }
 
     @Override
-    public List<Post> findPostsByIds(List<Long> postIds) {
-        List<Post> posts = new ArrayList<>();
-        for(Long id : postIds) {
-            Post post = postRepository.findPostById(id);
-            if(!posts.contains(post)) {
-                posts.add(post);
-            }
-        }
-        return posts;
+    public List<Post> findPostsByAuthorIn(List<User> userList) {
+        return postRepository.findPostsByAuthorIn(userList);
+    }
+
+    @Override
+    public List<Post> findPostsByPublishedAtDateRange(String startDateStr, String endDateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate start = LocalDate.parse(startDateStr, formatter);
+        LocalDate end = LocalDate.parse(endDateStr, formatter);
+
+        LocalDateTime startDate = start.atStartOfDay();
+        LocalDateTime endDate = end.atStartOfDay();
+        return postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
     }
 }

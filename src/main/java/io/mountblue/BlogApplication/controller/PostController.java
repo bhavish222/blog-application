@@ -5,6 +5,7 @@ import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.services.TagServiceImplementation;
+import io.mountblue.BlogApplication.services.UserServiceImplementation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,15 @@ public class PostController {
 
     private PostServiceImplementation postServiceImplementation;
     private TagServiceImplementation tagServiceImplementation;
+    private UserServiceImplementation userServiceImplementation;
 
-    public PostController(PostServiceImplementation postServiceImplementation, TagServiceImplementation tagServiceImplementation){
+
+
+
+    public PostController(PostServiceImplementation postServiceImplementation, TagServiceImplementation tagServiceImplementation, UserServiceImplementation userServiceImplementation){
         this.postServiceImplementation = postServiceImplementation;
         this.tagServiceImplementation = tagServiceImplementation;
+        this.userServiceImplementation = userServiceImplementation;
     }
 
     @GetMapping("/")
@@ -29,8 +35,10 @@ public class PostController {
         List<Post> posts = postServiceImplementation.findAllPosts();
         posts = postServiceImplementation.getPostsSortedByDate(posts);
         List<Tag> tagList = tagServiceImplementation.findAllTags();
+        List<User> userList = userServiceImplementation.findAllUsers();
         model.addAttribute("posts", posts);
         model.addAttribute("tagList", tagList);
+        model.addAttribute("userList", userList);
         return "landingPage";
     }
 

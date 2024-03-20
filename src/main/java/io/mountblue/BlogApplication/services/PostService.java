@@ -1,7 +1,11 @@
 package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
+import io.mountblue.BlogApplication.entity.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public interface PostService {
@@ -14,5 +18,6 @@ public interface PostService {
     List<Post> getPostsSortedByOldestDate(List<Post> post);
     String findTagsOfPostToString(Post post);
     void saveOrUpdate(Post post, String tagsString);
-    List<Post> findPostsByIds(List<Long> postIds);
+    List<Post> findPostsByAuthorIn(List<User> userList);
+    List<Post> findPostsByPublishedAtDateRange(String startDate, String endDate);
 }

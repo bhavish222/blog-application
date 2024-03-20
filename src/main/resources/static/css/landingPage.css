@@ -72,5 +72,5 @@ a {
     border: 1px solid black;
     width: 220px;
     overflow-y: scroll;
-    height: 200px;
+    max-height: 230px;
 }
