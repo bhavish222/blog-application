@@ -33,4 +33,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+    List<Post> findAllPostsByIdIn(List<Long> postsIdList);
 }

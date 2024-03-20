@@ -20,4 +20,5 @@ public interface PostService {
     void saveOrUpdate(Post post, String tagsString);
     List<Post> findPostsByAuthorIn(List<User> userList);
     List<Post> findPostsByPublishedAtDateRange(String startDate, String endDate);
+    List<Post> findAllPostsByIdsIn(List<Long> postsIdList);
 }

@@ -57,17 +57,20 @@ public class SearchAndSortController {
     public String index(
             @RequestParam(value = "sort", defaultValue = "newest", required = false) String sort,
             @RequestParam("searchBarInput") String searchBarInput,
+            @RequestParam(name = "postId") List<Long> postsIdList,
             Model model
     ) {
-        List<Post> posts = postServiceImplementation.findAllPosts();
+        List<Post> posts = postServiceImplementation.findAllPostsByIdsIn(postsIdList);
         List<Post> filteredPost = searchAndSortServiceImplementation.toFindAllPostsForSearch(posts, searchBarInput);
         if (sort.equals("newest")) {
             filteredPost = postServiceImplementation.getPostsSortedByDate(filteredPost);
         } else {
             filteredPost = postServiceImplementation.getPostsSortedByOldestDate(filteredPost);
         }
-                List<Tag> tagList = tagServiceImplementation.findAllTags();
+
+        List<Tag> tagList = tagServiceImplementation.findAllTags();
         List<User> userList = userServiceImplementation.findAllUsers();
+
         model.addAttribute("tagList", tagList);
         model.addAttribute("userList", userList);
         model.addAttribute("posts", filteredPost);
@@ -81,7 +84,7 @@ public class SearchAndSortController {
             @RequestParam(name = "userId", required = false) List<User> userIds,
             @RequestParam(name = "startDate", required = false) String startDateStr,
             @RequestParam(name = "endDate", required = false) String endDateStr,
-            @RequestParam(value = "sort" ,defaultValue = "newest") String sort,
+            @RequestParam(name = "postId") List<Long> postsIdList,
             Model model
     ) {
         List<Post> postsForTags = new ArrayList<>();
@@ -127,13 +130,19 @@ public class SearchAndSortController {
             allUniquePosts = posts;
         }
 
+        List<Post> existingPostsInPage = postServiceImplementation.findAllPostsByIdsIn(postsIdList);
+        List<Post> commonPosts = new ArrayList<>();
+        for(Post post : allUniquePosts) {
+            if(existingPostsInPage.contains(post)) {
+                commonPosts.add(post);
+            }
+        }
         List<Tag> tagList = tagServiceImplementation.findAllTags();
         List<User> userList = userServiceImplementation.findAllUsers();
+        commonPosts = postServiceImplementation.getPostsSortedByDate(commonPosts);
+        model.addAttribute("posts", commonPosts);
         model.addAttribute("tagList", tagList);
         model.addAttribute("userList", userList);
-
-        allUniquePosts = postServiceImplementation.getPostsSortedByDate(allUniquePosts);
-        model.addAttribute("posts", allUniquePosts);
         return "landingPage";
     }
 }

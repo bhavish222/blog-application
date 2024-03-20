@@ -135,4 +135,8 @@ public class PostServiceImplementation implements PostService{
         LocalDateTime endDate = end.atStartOfDay();
         return postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
     }
+
+    public List<Post> findAllPostsByIdsIn(List<Long> postsIdList) {
+        return postRepository.findAllPostsByIdIn(postsIdList);
+    }
 }
