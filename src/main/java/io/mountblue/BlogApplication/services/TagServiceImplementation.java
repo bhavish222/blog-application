@@ -19,4 +19,5 @@ public class TagServiceImplementation implements TagService{
     public List<Tag> findAllTags() {
         return tagRepository.findAll();
     }
+
 }

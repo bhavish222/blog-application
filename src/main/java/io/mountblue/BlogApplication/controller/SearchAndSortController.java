@@ -7,7 +7,9 @@ import io.mountblue.BlogApplication.entity.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -35,15 +37,14 @@ public class SearchAndSortController {
     @GetMapping("/search")
     public String search(
             @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
-            @RequestParam(value = "sort" ,defaultValue = "newest") String sort,
+            @RequestParam(value = "sort", defaultValue = "newest") String sort,
             Model model
     ) {
         List<Post> posts = postServiceImplementation.findAllPosts();
         List<Post> filteredPostBasedOnSearch;
-        if(searchBarInput != null && !searchBarInput.isEmpty()) {
+        if (searchBarInput != null && !searchBarInput.isEmpty()) {
             filteredPostBasedOnSearch = searchAndSortServiceImplementation.toFindAllPostsForSearch(posts, searchBarInput);
-        }
-        else {
+        } else {
             filteredPostBasedOnSearch = postServiceImplementation.findAllPosts();
         }
 
@@ -95,21 +96,21 @@ public class SearchAndSortController {
         List<Post> postsForTags = new ArrayList<>();
         List<Post> postsForUser = new ArrayList<>();
         List<Post> postsForDate = new ArrayList<>();
-        if(tagIds != null) {
+        if (tagIds != null) {
             postsForTags = postTagServiceImplementation.findAllPostsByTags(tagIds);
         }
-        if(userIds != null) {
+        if (userIds != null) {
             postsForUser = postServiceImplementation.findPostsByAuthorIn(userIds);
         }
-        if(!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
+        if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
             postsForDate = postServiceImplementation.findPostsByPublishedAtDateRange(startDateStr, endDateStr);
         }
 
         List<Post> posts = searchAndSortServiceImplementation.combineFilters(postsForTags, postsForUser, postsForDate);
         List<Post> existingPostsInPage = postServiceImplementation.findAllPostsByIdIn(postsIdList);
         List<Post> commonPosts = new ArrayList<>();
-        for(Post post : posts) {
-            if(existingPostsInPage.contains(post)) {
+        for (Post post : posts) {
+            if (existingPostsInPage.contains(post)) {
                 commonPosts.add(post);
             }
         }

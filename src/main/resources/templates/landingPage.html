@@ -3,8 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/landingPage.css}">
+    <!--    <link rel="stylesheet" th:href="@{/static/css/landingPage.css}">-->
     <title>My Blog Application</title>
+    <style>
+        body {
+    font-family: sans-serif;
+    background-color: whitesmoke;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+}
+
+.search-field {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+}
+
+.sort-by-form {
+    position: absolute;
+    top: 80px;
+    right: 26px;
+}
+
+header input[type="text"] {
+    width: 300px;
+    padding: 8px;
+}
+
+header button {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+main {
+    display: flex;
+    position: relative;
+    top: 80px;
+    justify-content:space-around;
+}
+
+#post-container-div {
+    width: 380px;
+    margin: 10px;
+    border: 1px solid black;
+    padding: 10px 20px;
+    height: 14rem;
+    overflow: hidden;
+}
+a {
+    color: black;
+    text-decoration: none;
+}
+.aside-blog-posts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.filter-div {
+    border: 1px solid black;
+    width: 220px;
+    overflow-y: scroll;
+    max-height: 230px;
+}
+    </style>
 </head>
 <body>
 <div class="container">
@@ -97,15 +175,27 @@
             <div class="aside-blog-posts">
                 <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
                     <a th:href="@{'/post' + ${post.id}}">
-                        <h2 th:text="${post.title}" />
+                        <h2 th:text="${post.title}"/>
                         <h4 th:text="${post.author.name}"/>
-                        <h5 th:text="${post.createdAt}" />
-                        <div th:text="${post.excerpt}" />
+                        <h5 th:text="${post.createdAt.toLocalDate().toString()}"/>
+                        <div th:text="${post.excerpt}"/>
                     </a>
                 </div>
             </div>
         </span>
+        <div th:if="${totalPages > 1}">
+            <div>
+                <a th:if="${currentPage > 1}" th:href="@{'/pageNo' + ${currentPage - 1} + '/pageSize' + ${pageSize}}">
+                    Previous
+                </a>
+            </div>
+            <div>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/pageNo' + ${currentPage + 1} + '/pageSize' + ${pageSize}}">
+                    Next
+                </a>
+            </div>
+        </div>
     </main>
-</div>
+</div>3
 </body>
 </html>
