@@ -6,5 +6,5 @@ import io.mountblue.BlogApplication.entity.Tag;
 import java.util.List;
 
 public interface PostTagService {
-    List<Post> findAllPostsByTags(List<Tag> tagIds);
+    List<Post> findAllPostsByTags(List<Long> tagIds);
 }

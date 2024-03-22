@@ -12,8 +12,8 @@ import java.util.List;
 
 @Repository
 public interface PostTagRepository extends JpaRepository<PostTag, Long> {
-    @Query("SELECT DISTINCT pt.post FROM PostTag pt WHERE pt.tag IN :tagIds")
+    @Query("SELECT DISTINCT pt.post FROM PostTag pt WHERE pt.tag.id IN :tagIds")
     List<Post> findPostIdsByTagIds(
-            @Param("tagIds") List<Tag> tagIds
+            @Param("tagIds") List<Long> tagIds
     );
 }

@@ -28,39 +28,25 @@ public class PostController {
             TagServiceImplementation tagServiceImplementation,
             UserServiceImplementation userServiceImplementation,
             PostTagServiceImplementation postTagServiceImplementation
-    ){
+    ) {
         this.postServiceImplementation = postServiceImplementation;
         this.tagServiceImplementation = tagServiceImplementation;
         this.userServiceImplementation = userServiceImplementation;
         this.postTagServiceImplementation = postTagServiceImplementation;
     }
 
-    @GetMapping("/pageNo{pageNo}/pageSize{pageSize}")
-    public String findPaginated(
-            @PathVariable(value = "pageNo") int pageNo,
-            @PathVariable(value = "pageSize") int pageSize,
-            Model model
-    ) {
-        Page<Post> page = postServiceImplementation.paginationPage(pageNo, pageSize);
-        List<Post> posts = page.getContent();
-        posts = postServiceImplementation.getPostsSortedByDate(posts);
-        model.addAttribute("currentPage", pageNo);
-        model.addAttribute("posts", posts);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalPosts", page.getTotalElements());
-        List<Tag> tagList = tagServiceImplementation.findAllTags();
-        List<User> userList = userServiceImplementation.findAllUsers();
-        model.addAttribute("tagList", tagList);
-        model.addAttribute("userList", userList);
-        return "landingPage";
-    }
-
     @GetMapping("/")
     public String index(
             Model model
     ) {
-        return findPaginated(1,3, model);
+        List<Post> posts = postServiceImplementation.findAllPosts();
+        posts = postServiceImplementation.getPostsSortedByDate(posts);
+        List<Tag> tagList = tagServiceImplementation.findAllTags();
+        List<User> userList = userServiceImplementation.findAllUsers();
+        model.addAttribute("tagList", tagList);
+        model.addAttribute("userList", userList);
+        model.addAttribute("posts", posts);
+        return "landingPage";
     }
 
     @GetMapping("/newpost")

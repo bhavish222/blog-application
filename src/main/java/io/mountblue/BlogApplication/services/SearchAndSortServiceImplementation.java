@@ -6,6 +6,8 @@ import io.mountblue.BlogApplication.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 @Service
@@ -44,36 +46,11 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
 
     @Override
     public List<Post> combineFilters(List<Post> postsForTags, List<Post> postsForUser, List<Post> postsForDate) {
-        List<Post> posts = new ArrayList<>();
-        if(!postsForTags.isEmpty() && !postsForUser.isEmpty()) {
-            for (Post post : postsForTags) {
-                if (postsForUser.contains(post)) {
-                    posts.add(post);
-                }
-            }
-        }
-        else if(postsForTags.isEmpty() && !postsForUser.isEmpty()) {
-            posts = postsForUser;
-        }
-        else if(!postsForTags.isEmpty()) {
-            posts = postsForTags;
-        }
-        else {
-            posts = postServiceImplementation.findAllPosts();
-        }
-
-        List<Post> allUniquePosts = new ArrayList<>();
-
-        if(!postsForDate.isEmpty()) {
-            for(Post post : posts) {
-                if(postsForDate.contains(post)) {
-                    allUniquePosts.add(post);
-                }
-            }
-        }
-        else {
-            allUniquePosts = posts;
-        }
-        return allUniquePosts;
+        Set<Post> uniquePosts = new HashSet<>();
+        uniquePosts.addAll(postsForTags);
+        uniquePosts.addAll(postsForUser);
+        uniquePosts.addAll(postsForDate);
+        List<Post> posts = new ArrayList<>(uniquePosts);
+        return posts;
     }
 }

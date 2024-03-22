@@ -136,13 +136,14 @@ public class PostServiceImplementation implements PostService {
     }
 
     @Override
-    public List<Post> findPostsByAuthorIn(List<User> userList) {
-        return postRepository.findPostsByAuthorIn(userList);
+    public List<Post> findPostsByAuthorIn(List<Long> userList) {
+        return postRepository.findPostsByAuthorIdIn(userList);
     }
 
     @Override
     public List<Post> findPostsByPublishedAtDateRange(String startDateStr, String endDateStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        System.out.println(startDateStr + "\n\n\n" + endDateStr + "\n\n\n");
         LocalDate start = LocalDate.parse(startDateStr, formatter);
         LocalDate end = LocalDate.parse(endDateStr, formatter);
 

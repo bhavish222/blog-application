@@ -19,7 +19,6 @@ public interface PostService {
     List<Post> getPostsSortedByOldestDate(List<Post> post);
     String findTagsOfPostToString(Post post);
     void saveOrUpdate(Post post, String tagsString, String action);
-    List<Post> findPostsByAuthorIn(List<User> userList);
+    List<Post> findPostsByAuthorIn(List<Long> userList);
     List<Post> findPostsByPublishedAtDateRange(String startDate, String endDate);
-    List<Post> findAllPostsByIdIn(List<Long> postsIdList);
 }

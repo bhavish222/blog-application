@@ -22,8 +22,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("posts") List<Post> posts
     );
 
-    List<Post> findPostsByAuthorIn(
-            List<User> userList
+    List<Post> findPostsByAuthorIdIn(
+            List<Long> userList
     );
 
     @Query("SELECT p FROM Post p WHERE p.publishedAt BETWEEN :startDate AND :endDate")

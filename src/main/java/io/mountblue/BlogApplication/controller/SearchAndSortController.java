@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -34,92 +33,73 @@ public class SearchAndSortController {
         this.userServiceImplementation = userServiceImplementation;
     }
 
-    @GetMapping("/search")
-    public String search(
+    @GetMapping("/search/filters/sort")
+    public String searchFiltersSort(
             @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
-            @RequestParam(value = "sort", defaultValue = "newest") String sort,
-            Model model
-    ) {
-        List<Post> posts = postServiceImplementation.findAllPosts();
-        List<Post> filteredPostBasedOnSearch;
-        if (searchBarInput != null && !searchBarInput.isEmpty()) {
-            filteredPostBasedOnSearch = searchAndSortServiceImplementation.toFindAllPostsForSearch(posts, searchBarInput);
-        } else {
-            filteredPostBasedOnSearch = postServiceImplementation.findAllPosts();
-        }
-
-        filteredPostBasedOnSearch = postServiceImplementation.getPostsSortedByDate(filteredPostBasedOnSearch);
-        List<Tag> tagList = tagServiceImplementation.findAllTags();
-        List<User> userList = userServiceImplementation.findAllUsers();
-        model.addAttribute("tagList", tagList);
-        model.addAttribute("userList", userList);
-        model.addAttribute("posts", filteredPostBasedOnSearch);
-        model.addAttribute("searchBarInput", searchBarInput);
-        model.addAttribute("sort", sort);
-        return "landingPage";
-    }
-
-    @GetMapping("/sort")
-    public String index(
             @RequestParam(value = "sort", defaultValue = "newest", required = false) String sort,
-            @RequestParam("searchBarInput") String searchBarInput,
-            @RequestParam(name = "postId") List<Long> postsIdList,
-            Model model
-    ) {
-        List<Post> posts = postServiceImplementation.findAllPostsByIdIn(postsIdList);
-        List<Post> filteredPost = searchAndSortServiceImplementation.toFindAllPostsForSearch(posts, searchBarInput);
-        if (sort.equals("newest")) {
-            filteredPost = postServiceImplementation.getPostsSortedByDate(filteredPost);
-        } else {
-            filteredPost = postServiceImplementation.getPostsSortedByOldestDate(filteredPost);
-        }
-
-        List<Tag> tagList = tagServiceImplementation.findAllTags();
-        List<User> userList = userServiceImplementation.findAllUsers();
-
-        model.addAttribute("tagList", tagList);
-        model.addAttribute("userList", userList);
-        model.addAttribute("posts", filteredPost);
-        model.addAttribute("searchBarInput", searchBarInput);
-        return "landingPage";
-    }
-
-    @GetMapping("/filter-tags")
-    public String filterTags(
-            @RequestParam(name = "tagId", required = false) List<Tag> tagIds,
-            @RequestParam(name = "userId", required = false) List<User> userIds,
+            @RequestParam(name = "tagId", required = false) List<Long> tagId,
+            @RequestParam(name = "userId", required = false) List<Long> userId,
             @RequestParam(name = "startDate", required = false) String startDateStr,
             @RequestParam(name = "endDate", required = false) String endDateStr,
-            @RequestParam(name = "postId") List<Long> postsIdList,
             Model model
     ) {
+        List<Post> searchedPosts = postServiceImplementation.findAllPosts();
+        if(searchBarInput != null && !searchBarInput.isEmpty()) {
+            searchedPosts = searchAndSortServiceImplementation.toFindAllPostsForSearch(searchedPosts, searchBarInput);
+        }
+        else {
+            searchedPosts = postServiceImplementation.findAllPosts();
+        }
+
+        if(startDateStr == null) {
+            startDateStr = "";
+            endDateStr = "";
+        }
         List<Post> postsForTags = new ArrayList<>();
         List<Post> postsForUser = new ArrayList<>();
         List<Post> postsForDate = new ArrayList<>();
-        if (tagIds != null) {
-            postsForTags = postTagServiceImplementation.findAllPostsByTags(tagIds);
+
+        if(tagId != null) {
+            postsForTags = postTagServiceImplementation.findAllPostsByTags(tagId);
         }
-        if (userIds != null) {
-            postsForUser = postServiceImplementation.findPostsByAuthorIn(userIds);
+        if(userId != null) {
+            postsForUser = postServiceImplementation.findPostsByAuthorIn(userId);
         }
         if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
             postsForDate = postServiceImplementation.findPostsByPublishedAtDateRange(startDateStr, endDateStr);
         }
 
-        List<Post> posts = searchAndSortServiceImplementation.combineFilters(postsForTags, postsForUser, postsForDate);
-        List<Post> existingPostsInPage = postServiceImplementation.findAllPostsByIdIn(postsIdList);
-        List<Post> commonPosts = new ArrayList<>();
-        for (Post post : posts) {
-            if (existingPostsInPage.contains(post)) {
-                commonPosts.add(post);
+        List<Post> unionPosts = searchAndSortServiceImplementation.combineFilters(postsForTags, postsForUser, postsForDate);
+        List<Post> commonPosts = new    ArrayList<>();
+        if(!unionPosts.isEmpty()) {
+            for(Post post : searchedPosts) {
+                if(unionPosts.contains(post)) {
+                    commonPosts.add(post);
+                }
             }
         }
+        else {
+            commonPosts = searchedPosts;
+        }
+
+        if(sort.equals("newest")) {
+            commonPosts = postServiceImplementation.getPostsSortedByDate(commonPosts);
+        }
+        else {
+            commonPosts = postServiceImplementation.getPostsSortedByOldestDate(commonPosts);
+        }
+
         List<Tag> tagList = tagServiceImplementation.findAllTags();
         List<User> userList = userServiceImplementation.findAllUsers();
-        commonPosts = postServiceImplementation.getPostsSortedByDate(commonPosts);
-        model.addAttribute("posts", commonPosts);
         model.addAttribute("tagList", tagList);
         model.addAttribute("userList", userList);
+        model.addAttribute("posts", commonPosts);
+        model.addAttribute("startDate", startDateStr);
+        model.addAttribute("endDate", endDateStr);
+        model.addAttribute("tagId", tagId);
+        model.addAttribute("userId", userId);
+        model.addAttribute("searchBarInput", searchBarInput);
         return "landingPage";
+
     }
 }

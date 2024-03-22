@@ -1,8 +1,6 @@
 package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
-import io.mountblue.BlogApplication.entity.Tag;
-import io.mountblue.BlogApplication.entity.User;
 
 import java.util.List;
 

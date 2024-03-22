@@ -15,7 +15,7 @@ public class PostTagServiceImplementation implements PostTagService{
     }
 
     @Override
-    public List<Post> findAllPostsByTags(List<Tag> tagIds) {
+    public List<Post> findAllPostsByTags(List<Long> tagIds) {
         return postTagRepository.findPostIdsByTagIds(tagIds);
     }
 
