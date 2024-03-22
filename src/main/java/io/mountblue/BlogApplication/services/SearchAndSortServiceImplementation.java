@@ -77,7 +77,6 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
 
     @Override
     public List<Post> filteredByPosts(String startDateStr, String endDateStr, List<Long> tagId, List<Long> userId) {
-
         if(startDateStr == null) {
             startDateStr = "";
             endDateStr = "";
@@ -94,7 +93,6 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
         }
         if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            System.out.println(startDateStr + "\n\n\n" + endDateStr + "\n\n\n");
             LocalDate start = LocalDate.parse(startDateStr, formatter);
             LocalDate end = LocalDate.parse(endDateStr, formatter);
 
@@ -102,7 +100,6 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
             LocalDateTime endDate = end.atStartOfDay();
             postsForDate = postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
         }
-
         return combineFilters(postsForTags, postsForUser, postsForDate);
     }
 

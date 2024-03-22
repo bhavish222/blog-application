@@ -45,8 +45,8 @@ public class PostController {
             @RequestParam(name = "userId", required = false) List<Long> userId,
             @RequestParam(name = "startDate", required = false) String startDateStr,
             @RequestParam(name = "endDate", required = false) String endDateStr,
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "2", required = false) Integer pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "2", required = false) int pageSize,
             Model model
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
