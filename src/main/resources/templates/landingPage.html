@@ -3,85 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--        <link rel="stylesheet" th:href="@{/static/css/landingPage.css}">-->
+    <!--        <link rel="stylesheet" th:href="@{/static/css/landingPage.css}">-->
     <title>My Blog Application</title>
     <style>
         body {
-    font-family: sans-serif;
-    background-color: whitesmoke;
-}
+            font-family: sans-serif;
+            background-color: whitesmoke;
+        }
 
-.container {
-    width: 90%;
-    margin: auto;
-    padding: 20px;
-}
+        .container {
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+        }
 
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-h1 {
-    position: absolute;
-    top: 8px;
-    left: 16px;
-}
+        h1 {
+            position: absolute;
+            top: 8px;
+            left: 16px;
+        }
 
-.search-field {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-}
+        .search-field {
+              position: absolute;
+              top: 16px;
+              right: 16px;
+        }
 
-.sort-by-form {
-    position: absolute;
-    top: 80px;
-    right: 26px;
-}
+        .sort-by-form {
+            position: absolute;
+            top: 80px;
+            right: 26px;
+        }
 
-header input[type="text"] {
-    width: 300px;
-    padding: 8px;
-}
+        header input[type="text"] {
+            width: 300px;
+            padding: 8px;
+        }
 
-header button {
-    padding: 8px 16px;
-    cursor: pointer;
-}
+        header button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
 
-main {
-    display: flex;
-    position: relative;
-    top: 80px;
-    justify-content:space-around;
-}
+        main {
+            display: flex;
+            position: relative;
+            top: 80px;
+            justify-content:space-around;
+        }
 
-#post-container-div {
-    width: 380px;
-    margin: 10px;
-    border: 1px solid black;
-    padding: 10px 20px;
-    height: 14rem;
-    overflow: hidden;
-}
-a {
-    color: black;
-    text-decoration: none;
-}
-.aside-blog-posts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    width: 100%;
-}
+        #post-container-div {
+            width: 380px;
+            margin: 10px;
+            border: 1px solid black;
+            padding: 10px 20px;
+            height: 14rem;
+            overflow: hidden;
+        }
+        a {
+            color: black;
+            text-decoration: none;
+        }
+        .aside-blog-posts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 100%;
+        }
 
-.filter-div {
-    border: 1px solid black;
-    width: 220px;
-    overflow-y: scroll;
-    max-height: 230px;
-}
+        .filter-div {
+            border: 1px solid black;
+            width: 220px;
+            overflow-y: scroll;
+            max-height: 230px;
+        }
     </style>
 </head>
 <body>
@@ -109,7 +109,8 @@ a {
             </select>
 
             <span th:each="entry : ${userId}" class="tags-span">
-                <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
+                <input type="hidden" name="userId" th:value="${entry}"
+                       th:if="${userId!=null && userId.contains(entry)}">
             </span>
             <span th:each="entry : ${tagId}" class="tags-span">
                 <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
@@ -143,7 +144,8 @@ a {
                 </h6>
                 <div class="filter-div">
                     <span th:each="tag : ${tagList}" class="tags-span">
-                        <input type="checkbox" name="tagId" th:value="${tag.id}" th:text="${tag.name}" th:checked="${tagId != null && tagId.contains(tag.id)}">
+                        <input type="checkbox" name="tagId" th:value="${tag.id}" th:text="${tag.name}"
+                               th:checked="${tagId != null && tagId.contains(tag.id)}">
                         <br>
                     </span>
                 </div>
@@ -153,7 +155,8 @@ a {
                 </h6>
                 <div class="filter-div">
                     <span th:each="user : ${userList}" class="tags-span">
-                        <input type="checkbox" name="userId" th:text="${user.name}" th:value="${user.id}" th:checked="${userId!=null && userId.contains(user.id)}">
+                        <input type="checkbox" name="userId" th:text="${user.name}" th:value="${user.id}"
+                               th:checked="${userId!=null && userId.contains(user.id)}">
                         <br>
                     </span>
                 </div>

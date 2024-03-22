@@ -2,9 +2,15 @@ package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
-import io.mountblue.BlogApplication.entity.User;
+import io.mountblue.BlogApplication.repository.PostRepository;
+import io.mountblue.BlogApplication.repository.PostTagRepository;
+import io.mountblue.BlogApplication.repository.TagRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,15 +19,17 @@ import java.util.List;
 @Service
 public class SearchAndSortServiceImplementation implements SearchAndSortService {
     public SearchAndSortServiceImplementation() {}
-    private PostServiceImplementation postServiceImplementation;
-    private PostTagServiceImplementation postTagServiceImplementation;
 
+    private PostRepository postRepository;
+    private PostTagRepository postTagRepository;
+
+    @Autowired
     public SearchAndSortServiceImplementation(
-            PostServiceImplementation postServiceImplementation,
-            PostTagServiceImplementation postTagServiceImplementation
+            PostRepository postRepository,
+            PostTagRepository postTagRepository
     ) {
-        this.postServiceImplementation = postServiceImplementation;
-        this.postTagServiceImplementation = postTagServiceImplementation;
+        this.postRepository = postRepository;
+        this.postTagRepository = postTagRepository;
     }
 
     @Override
@@ -50,7 +58,76 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
         uniquePosts.addAll(postsForTags);
         uniquePosts.addAll(postsForUser);
         uniquePosts.addAll(postsForDate);
-        List<Post> posts = new ArrayList<>(uniquePosts);
-        return posts;
+        return new ArrayList<Post>(uniquePosts);
+    }
+
+    @Override
+    public List<Post> searchPostBySearchBarInput(String searchBarInput) {
+        List<Post> searchedPosts = postRepository.findAll();
+        if(searchBarInput != null && !searchBarInput.isEmpty()) {
+            searchedPosts = toFindAllPostsForSearch(searchedPosts, searchBarInput);
+        }
+        else {
+            searchedPosts = postRepository.findAll();
+        }
+        return searchedPosts;
+    }
+
+    @Override
+    public List<Post> filteredByPosts(String startDateStr, String endDateStr, List<Long> tagId, List<Long> userId) {
+
+        if(startDateStr == null) {
+            startDateStr = "";
+            endDateStr = "";
+        }
+        List<Post> postsForTags = new ArrayList<>();
+        List<Post> postsForUser = new ArrayList<>();
+        List<Post> postsForDate = new ArrayList<>();
+
+        if(tagId != null) {
+            postsForTags = postTagRepository.findPostIdsByTagIds(tagId);
+        }
+        if(userId != null) {
+            postsForUser = postRepository.findPostsByAuthorIdIn(userId);
+        }
+        if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            System.out.println(startDateStr + "\n\n\n" + endDateStr + "\n\n\n");
+            LocalDate start = LocalDate.parse(startDateStr, formatter);
+            LocalDate end = LocalDate.parse(endDateStr, formatter);
+
+            LocalDateTime startDate = start.atStartOfDay();
+            LocalDateTime endDate = end.atStartOfDay();
+            postsForDate = postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
+        }
+
+        return combineFilters(postsForTags, postsForUser, postsForDate);
+    }
+
+    @Override
+    public List<Post> checkForSearchedAndFiltered(List<Post> searchedPosts, List<Post> filteredPosts) {
+        List<Post> commonPosts = new ArrayList<>();
+        if(!filteredPosts.isEmpty()) {
+            for(Post post : searchedPosts) {
+                if(filteredPosts.contains(post)) {
+                    commonPosts.add(post);
+                }
+            }
+        }
+        else {
+            commonPosts = searchedPosts;
+        }
+        return commonPosts;
+    }
+
+    @Override
+    public List<Post> sort(List<Post> commonPosts, String sort) {
+        if(sort.equals("newest")) {
+            commonPosts = postRepository.findPostsInAndOrderByPublishedAtDesc(commonPosts);
+        }
+        else {
+            commonPosts = postRepository.findPostsInAndOrderByPublishedAtAsc(commonPosts);
+        }
+        return commonPosts;
     }
 }

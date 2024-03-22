@@ -18,5 +18,4 @@ public class PostTagServiceImplementation implements PostTagService{
     public List<Post> findAllPostsByTags(List<Long> tagIds) {
         return postTagRepository.findPostIdsByTagIds(tagIds);
     }
-
 }

@@ -8,9 +8,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostService {
-
-    Page<Post> paginationPage(int pageNo, int pageSize);
-
     void save(Post post);
     List<Post> findAllPosts();
     Post findPostById(Long id);

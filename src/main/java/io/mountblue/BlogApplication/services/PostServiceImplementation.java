@@ -21,7 +21,6 @@ public class PostServiceImplementation implements PostService {
     public PostServiceImplementation() {
 
     }
-
     private PostRepository postRepository;
     private TagRepository tagRepository;
 
@@ -32,12 +31,6 @@ public class PostServiceImplementation implements PostService {
     ) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
-    }
-
-    @Override
-    public Page<Post> paginationPage(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        return postRepository.findAll(pageable);
     }
 
     @Override
@@ -150,9 +143,5 @@ public class PostServiceImplementation implements PostService {
         LocalDateTime startDate = start.atStartOfDay();
         LocalDateTime endDate = end.atStartOfDay();
         return postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
-    }
-
-    public List<Post> findAllPostsByIdIn(List<Long> postsIdList) {
-        return postRepository.findAllPostsByIdIn(postsIdList);
     }
 }
