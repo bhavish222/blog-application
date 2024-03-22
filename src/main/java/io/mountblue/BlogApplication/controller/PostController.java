@@ -1,14 +1,12 @@
 package io.mountblue.BlogApplication.controller;
 
-import io.mountblue.BlogApplication.services.PostServiceImplementation;
+import io.mountblue.BlogApplication.services.*;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.entity.User;
-import io.mountblue.BlogApplication.services.PostTagServiceImplementation;
-import io.mountblue.BlogApplication.services.TagServiceImplementation;
-import io.mountblue.BlogApplication.services.UserServiceImplementation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,31 +19,59 @@ public class PostController {
     private TagServiceImplementation tagServiceImplementation;
     private UserServiceImplementation userServiceImplementation;
     private PostTagServiceImplementation postTagServiceImplementation;
+    private SearchAndSortServiceImplementation searchAndSortServiceImplementation;
+
 
 
     public PostController(
             PostServiceImplementation postServiceImplementation,
             TagServiceImplementation tagServiceImplementation,
             UserServiceImplementation userServiceImplementation,
-            PostTagServiceImplementation postTagServiceImplementation
+            PostTagServiceImplementation postTagServiceImplementation,
+            SearchAndSortServiceImplementation searchAndSortServiceImplementation
     ) {
         this.postServiceImplementation = postServiceImplementation;
         this.tagServiceImplementation = tagServiceImplementation;
         this.userServiceImplementation = userServiceImplementation;
         this.postTagServiceImplementation = postTagServiceImplementation;
+        this.searchAndSortServiceImplementation = searchAndSortServiceImplementation;
     }
 
     @GetMapping("/")
     public String index(
+            @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
+            @RequestParam(value = "sort", defaultValue = "newest", required = false) String sort,
+            @RequestParam(name = "tagId", required = false) List<Long> tagId,
+            @RequestParam(name = "userId", required = false) List<Long> userId,
+            @RequestParam(name = "startDate", required = false) String startDateStr,
+            @RequestParam(name = "endDate", required = false) String endDateStr,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "2", required = false) Integer pageSize,
             Model model
     ) {
-        List<Post> posts = postServiceImplementation.findAllPosts();
-        posts = postServiceImplementation.getPostsSortedByDate(posts);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<Post> searchedPosts = searchAndSortServiceImplementation.searchPostBySearchBarInput(searchBarInput);
+        List<Post> filteredPosts = searchAndSortServiceImplementation.filteredByPosts(startDateStr, endDateStr, tagId, userId);
+        List<Post> commonPosts = searchAndSortServiceImplementation.checkForSearchedAndFiltered(searchedPosts, filteredPosts);
+        Page<Post> posts =  searchAndSortServiceImplementation.sort(commonPosts, sort, pageable);
+
+        int totalPages = (int) (posts.getTotalElements() / pageSize);
+        boolean hasNextPages = pageNumber < totalPages - 1;
+
+        model.addAttribute("hasNextPage", hasNextPages);
+        model.addAttribute("pageNumber",pageNumber);
+
         List<Tag> tagList = tagServiceImplementation.findAllTags();
         List<User> userList = userServiceImplementation.findAllUsers();
         model.addAttribute("tagList", tagList);
         model.addAttribute("userList", userList);
         model.addAttribute("posts", posts);
+        model.addAttribute("startDate", startDateStr);
+        model.addAttribute("endDate", endDateStr);
+        model.addAttribute("tagId", tagId);
+        model.addAttribute("userId", userId);
+        model.addAttribute("searchBarInput", searchBarInput);
+        model.addAttribute("pageNumber",pageNumber);
         return "landingPage";
     }
 

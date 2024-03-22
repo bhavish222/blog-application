@@ -3,86 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--        <link rel="stylesheet" th:href="@{/static/css/landingPage.css}">-->
+    <link rel="stylesheet" th:href="@{/css/landingPage.css}">
     <title>My Blog Application</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: whitesmoke;
-        }
-
-        .container {
-            width: 90%;
-            margin: auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            position: absolute;
-            top: 8px;
-            left: 16px;
-        }
-
-        .search-field {
-              position: absolute;
-              top: 16px;
-              right: 16px;
-        }
-
-        .sort-by-form {
-            position: absolute;
-            top: 80px;
-            right: 26px;
-        }
-
-        header input[type="text"] {
-            width: 300px;
-            padding: 8px;
-        }
-
-        header button {
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-
-        main {
-            display: flex;
-            position: relative;
-            top: 80px;
-            justify-content:space-around;
-        }
-
-        #post-container-div {
-            width: 380px;
-            margin: 10px;
-            border: 1px solid black;
-            padding: 10px 20px;
-            height: 14rem;
-            overflow: hidden;
-        }
-        a {
-            color: black;
-            text-decoration: none;
-        }
-        .aside-blog-posts {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            width: 100%;
-        }
-
-        .filter-div {
-            border: 1px solid black;
-            width: 220px;
-            overflow-y: scroll;
-            max-height: 230px;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
@@ -90,7 +12,7 @@
         <div class="title">
             <h1><a th:href="@{/}">My Blog Application</a></h1>
             <span class="search-field">
-                <form th:action="@{/search/filters/sort}" method="get">
+                <form th:action="@{/}" method="get">
                     <input type="text" placeholder="Search Blog" name="searchBarInput"/>
                     <button type="submit">Search</button>
                 </form>
@@ -101,7 +23,7 @@
                 Write a Blog
             </a>
         </span>
-        <form th:action="@{/search/filters/sort}" method="get" th:object="${posts}" class="sort-by-form">
+        <form th:action="@{/}" method="get" th:object="${posts}" class="sort-by-form">
             <label for="sort">Sort by:</label>
             <select id="sort" name="sort">
                 <option value="newest">Newest first</option>
@@ -129,7 +51,7 @@
     <hr>
     <main id="articles-container" class="articles-container">
         <aside class="aside-filter">
-            <form th:action="@{/search/filters/sort}" method="get">
+            <form th:action="@{/}" method="get">
                 <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
                 <input type="hidden" th:value="${sort}" name="sort">
                 <div>
@@ -187,6 +109,28 @@
                 </div>
             </div>
         </span>
+        <div class="pagination">
+            <form class="previous" th:action="@{/}" method="get">
+                <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
+                <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
+                <input type="hidden" name="startDate">
+                <input type="hidden" name="endDate">
+                <input type="hidden" th:value="${sort}" name="sort">
+                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+                <input type="hidden" name="pageNumber" th:value="${pageNumber == null or pageNumber == 0 ? 0 : pageNumber - 1}"/>
+                <button type="submit">Previous</button>
+            </form>
+            <form class="next" th:action="@{/}" method="get">
+                <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
+                <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
+                <input type="hidden" name="startDate">
+                <input type="hidden" name="endDate">
+                <input type="hidden" th:value="${sort}" name="sort">
+                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+                <input type="hidden" name="pageNumber" th:value="${pageNumber == null ? 1 : pageNumber + 1}"/>
+                <button type="submit">Next</button>
+            </form>
+        </div>
     </main>
 </div>
 </body>

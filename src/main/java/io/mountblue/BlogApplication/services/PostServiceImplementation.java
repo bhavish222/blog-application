@@ -53,15 +53,15 @@ public class PostServiceImplementation implements PostService {
         postRepository.deleteById(id);
     }
 
-    @Override
-    public List<Post> getPostsSortedByDate(List<Post> posts) {
-        return postRepository.findPostsInAndOrderByPublishedAtDesc(posts);
-    }
-
-    @Override
-    public List<Post> getPostsSortedByOldestDate(List<Post> posts) {
-        return postRepository.findPostsInAndOrderByPublishedAtAsc(posts);
-    }
+//    @Override
+//    public List<Post> getPostsSortedByDate(List<Post> posts) {
+//        return postRepository.findPostsInAndOrderByPublishedAtDesc(posts);
+//    }
+//
+//    @Override
+//    public List<Post> getPostsSortedByOldestDate(List<Post> posts) {
+//        return postRepository.findPostsInAndOrderByPublishedAtAsc(posts);
+//    }
 
     @Override
     public String findTagsOfPostToString(Post post) {

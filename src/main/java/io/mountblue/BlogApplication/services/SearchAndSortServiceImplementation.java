@@ -6,6 +6,8 @@ import io.mountblue.BlogApplication.repository.PostRepository;
 import io.mountblue.BlogApplication.repository.PostTagRepository;
 import io.mountblue.BlogApplication.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -121,13 +123,14 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
     }
 
     @Override
-    public List<Post> sort(List<Post> commonPosts, String sort) {
+    public Page<Post> sort(List<Post> commonPosts, String sort, Pageable pageable) {
+        Page<Post> sortedPosts;
         if(sort.equals("newest")) {
-            commonPosts = postRepository.findPostsInAndOrderByPublishedAtDesc(commonPosts);
+            sortedPosts = postRepository.findPostsInAndOrderByPublishedAtDesc(commonPosts, pageable);
         }
         else {
-            commonPosts = postRepository.findPostsInAndOrderByPublishedAtAsc(commonPosts);
+            sortedPosts = postRepository.findPostsInAndOrderByPublishedAtAsc(commonPosts, pageable);
         }
-        return commonPosts;
+        return sortedPosts;
     }
 }
