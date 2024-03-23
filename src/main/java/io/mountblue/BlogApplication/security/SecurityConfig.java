@@ -27,6 +27,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                         configurer ->
                                 configurer
+                                        .requestMatchers("/css/**").permitAll()
                                         .requestMatchers("/").permitAll()
                                         .requestMatchers("/newpost").hasRole("ADMIN")
                                         .requestMatchers("/post**").permitAll()

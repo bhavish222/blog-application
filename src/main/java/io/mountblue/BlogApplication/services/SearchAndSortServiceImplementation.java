@@ -44,6 +44,9 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
             if(post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
+            if(post.getAuthor().getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
+                filteredPostBasedOnSearch.add(post);
+            }
             for(Tag tag : post.getTags()) {
                 if(tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
                     filteredPostBasedOnSearch.add(post);

@@ -7,6 +7,7 @@ import io.mountblue.BlogApplication.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +41,13 @@ public class PostController {
     @GetMapping("/")
     public String index(
             @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
-            @RequestParam(value = "sort", defaultValue = "newest", required = false) String sort,
+            @RequestParam(name = "sort", defaultValue = "newest", required = false) String sort,
             @RequestParam(name = "tagId", required = false) List<Long> tagId,
             @RequestParam(name = "userId", required = false) List<Long> userId,
             @RequestParam(name = "startDate", required = false) String startDateStr,
             @RequestParam(name = "endDate", required = false) String endDateStr,
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "3", required = false) Integer pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "3", required = false) int pageSize,
             Model model
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -54,6 +55,8 @@ public class PostController {
         List<Post> filteredPosts = searchAndSortServiceImplementation.filteredByPosts(startDateStr, endDateStr, tagId, userId);
         List<Post> commonPosts = searchAndSortServiceImplementation.checkForSearchedAndFiltered(searchedPosts, filteredPosts);
         Page<Post> posts =  searchAndSortServiceImplementation.sort(commonPosts, sort, pageable);
+
+        System.out.println(sort);
 
         int totalPages = (int) Math.ceil((double) posts.getTotalElements() / (double) pageSize);
         boolean hasNextPages = pageNumber < totalPages - 1;
