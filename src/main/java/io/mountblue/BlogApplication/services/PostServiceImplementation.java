@@ -53,16 +53,6 @@ public class PostServiceImplementation implements PostService {
         postRepository.deleteById(id);
     }
 
-//    @Override
-//    public List<Post> getPostsSortedByDate(List<Post> posts) {
-//        return postRepository.findPostsInAndOrderByPublishedAtDesc(posts);
-//    }
-//
-//    @Override
-//    public List<Post> getPostsSortedByOldestDate(List<Post> posts) {
-//        return postRepository.findPostsInAndOrderByPublishedAtAsc(posts);
-//    }
-
     @Override
     public String findTagsOfPostToString(Post post) {
         List<Tag> listOfTags = post.getTags();
@@ -123,6 +113,7 @@ public class PostServiceImplementation implements PostService {
                 existingPost.setExcerpt(post.getExcerpt());
                 existingPost.setAuthor(post.getAuthor());
                 existingPost.setPublishedAt(post.getPublishedAt());
+                System.out.println(post.getPublishedAt() + "\n\n");
                 existingPost.setExcerpt(post.getExcerpt());
             }
         }

@@ -109,29 +109,29 @@
                 </div>
             </div>
         </span>
-        <div class="pagination">
-            <form class="previous" th:action="@{/}" method="get">
-                <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
-                <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
-                <input type="hidden" name="startDate">
-                <input type="hidden" name="endDate">
-                <input type="hidden" th:value="${sort}" name="sort">
-                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
-                <input type="hidden" name="pageNumber" th:value="${pageNumber == null or pageNumber == 0 ? 0 : pageNumber - 1}"/>
-                <button type="submit">Previous</button>
-            </form>
-            <form class="next" th:action="@{/}" method="get">
-                <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
-                <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
-                <input type="hidden" name="startDate">
-                <input type="hidden" name="endDate">
-                <input type="hidden" th:value="${sort}" name="sort">
-                <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
-                <input type="hidden" name="pageNumber" th:value="${pageNumber == null ? 1 : pageNumber + 1}"/>
-                <button type="submit">Next</button>
-            </form>
-        </div>
     </main>
+</div>
+<div class="pagination">
+    <form class="previous" th:action="@{/}" method="get" th:if="${pageNumber > 0}">
+        <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
+        <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
+        <input type="hidden" name="startDate">
+        <input type="hidden" name="endDate">
+        <input type="hidden" th:value="${sort}" name="sort">
+        <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+        <input type="hidden" name="pageNumber" th:value="${pageNumber == null or pageNumber == 0 ? 0 : pageNumber - 1}"/>
+        <button type="submit">Previous</button>
+    </form>
+    <form class="next" th:action="@{/}" method="get" th:if="${hasNextPage}">
+        <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
+        <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
+        <input type="hidden" name="startDate">
+        <input type="hidden" name="endDate">
+        <input type="hidden" th:value="${sort}" name="sort">
+        <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
+        <input type="hidden" name="pageNumber" th:value="${pageNumber == null ? 1 : pageNumber + 1}"/>
+        <button type="submit">Next</button>
+    </form>
 </div>
 </body>
 </html>

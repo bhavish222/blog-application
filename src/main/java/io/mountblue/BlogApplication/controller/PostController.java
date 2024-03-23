@@ -45,8 +45,8 @@ public class PostController {
             @RequestParam(name = "userId", required = false) List<Long> userId,
             @RequestParam(name = "startDate", required = false) String startDateStr,
             @RequestParam(name = "endDate", required = false) String endDateStr,
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "2", required = false) int pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "3", required = false) Integer pageSize,
             Model model
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -55,9 +55,8 @@ public class PostController {
         List<Post> commonPosts = searchAndSortServiceImplementation.checkForSearchedAndFiltered(searchedPosts, filteredPosts);
         Page<Post> posts =  searchAndSortServiceImplementation.sort(commonPosts, sort, pageable);
 
-        int totalPages = (int) (posts.getTotalElements() / pageSize);
+        int totalPages = (int) Math.ceil((double) posts.getTotalElements() / (double) pageSize);
         boolean hasNextPages = pageNumber < totalPages - 1;
-
         model.addAttribute("hasNextPage", hasNextPages);
         model.addAttribute("pageNumber",pageNumber);
 
@@ -91,7 +90,7 @@ public class PostController {
     ) {
         postServiceImplementation.saveOrUpdate(post, tagsString, action);
         postServiceImplementation.save(post);
-        return "redirect:/post"+post.getId();
+        return "redirect:/";
     }
     @GetMapping("/post{post_id}")
     public String showOnePost(
