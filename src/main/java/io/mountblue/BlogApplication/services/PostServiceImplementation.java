@@ -95,15 +95,13 @@ public class PostServiceImplementation implements PostService {
         int currentPostLength = post.getContent().length();
         String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
 
-        if (action.equals("Publish")) {
-            post.setCreatedAt(LocalDateTime.now());
-            post.setPublishedAt(LocalDateTime.now());
+//            post.setCreatedAt(LocalDateTime.now());
+//            post.setPublishedAt(LocalDateTime.now());
             post.setIs_published(true);
-        }
         User user = new User(1L, "bhavi", "wadhwabhavish46@gmail.com", "3001");
         post.setAuthor(user);
         post.setExcerpt(excerpt);
-        post.setUpdatedAt(LocalDateTime.now());
+//        post.setUpdatedAt(LocalDateTime.now());
         if (post.getId() != null) {
             Post existingPost = findPostById(post.getId());
             if (existingPost != null) {
@@ -112,8 +110,8 @@ public class PostServiceImplementation implements PostService {
                 existingPost.setTags(post.getTags());
                 existingPost.setExcerpt(post.getExcerpt());
                 existingPost.setAuthor(post.getAuthor());
-                existingPost.setPublishedAt(post.getPublishedAt());
-                System.out.println(post.getPublishedAt() + "\n\n");
+//                existingPost.setPublishedAt(post.getPublishedAt());
+//                System.out.println(post.getPublishedAt() + "\n\n");
                 existingPost.setExcerpt(post.getExcerpt());
             }
         }

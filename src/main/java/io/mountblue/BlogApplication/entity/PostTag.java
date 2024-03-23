@@ -19,6 +19,17 @@ public class PostTag {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    public void onPrePersist() {
+        this.setCreatedAt(LocalDateTime.now());
+        this.setUpdatedAt(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        this.setUpdatedAt(LocalDateTime.now());
+    }
+
     public PostTag(Post post, Tag tag, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.post = post;
         this.tag = tag;

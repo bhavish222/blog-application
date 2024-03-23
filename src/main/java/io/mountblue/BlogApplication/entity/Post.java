@@ -50,6 +50,17 @@ public class Post {
         this.tags = tags;
     }
 
+    @PrePersist
+    public void onPrePersist() {
+        this.setCreatedAt(LocalDateTime.now());
+        this.setUpdatedAt(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        this.setUpdatedAt(LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
