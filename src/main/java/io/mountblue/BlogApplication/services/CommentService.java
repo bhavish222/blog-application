@@ -6,5 +6,5 @@ import io.mountblue.BlogApplication.entity.Post;
 public interface CommentService {
     Comment findCommentById(Long id);
     void deleteCommentById(Long id);
-    Long setCommentsForPost(Post post, Long commentId, String commentName);
+    Long setCommentsForPost(Post post, Long commentId, String commentName, String commentEmail, String commentContent);
 }

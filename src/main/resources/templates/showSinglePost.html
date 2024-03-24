@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -14,36 +14,44 @@
         </header>
         <main id="articles-container" class="articles-container">
             <h3 th:value="${post.title}" th:text="${post.title}"/>
-            <h4 th:value="${post.author.name}" th:text="${post.author.name}" />
+            <strong>Author : <span th:text="${post.author.name}"/></strong>
             <p th:text="${post.content}"/>
 
             <p>Tags:
                 <span th:each="tag : ${post.tags}" th:text="${tag.name} + ', ' "  />
             </p>
 
-            <form th:action="@{'/editpost/post' + ${post.id}}" method="post">
+            <form th:if="${#authentication.principal.username eq post.author.name}"
+                    th:action="@{'/editpost/post' + ${post.id}}"
+                  sec:authorize="hasAnyRole('AUTHOR','ADMIN')"
+                  method="post">
                 <button type="submit">Edit Post</button>
             </form>
             <br>
-            <form th:action="@{'/deletepost/post' + ${post.id}}" method="post">
+            <form th:if="${#authentication.principal.username eq post.author.name}"
+                  th:action="@{'/deletepost/post' + ${post.id}}"
+                  sec:authorize="hasAnyRole('AUTHOR','ADMIN')"
+                  method="post">
                 <button type="submit">Delete Post</button>
             </form>
             <br>
             <div>
                 <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post">
-                    <input type="text" th:value="${commentname}" name="commentname" required>
+                    Name : <input type="text" th:value="${commentName}" name="commentName" required>
+                    Email : <input type="email" th:value="${commentEmail}" name="commentEmail" required>
+                    comment : <input type="text" th:value="${commentContent}" name="commentContent" required>
                     <input type="hidden" name="commentId" th:value="${commentId}">
                     <input type="submit" name="action" value="Comment">
                 </form>
             </div>
             <div>
                 <div th:each="comment : ${post.getComments()}">
-                    <p>name : </p>
-                    <p th:text="${comment.getComment()}"/>
-                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" th:object="${comment}" method="post">
+                    <span><strong th:text="${comment.getName()}"/></span>
+                    <span th:text="${comment.getComment()}"/>
+                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" th:object="${comment}" method="post" sec:authorize="hasRole('ADMIN')">
                         <button type="submit" name="action">Update Comment</button>
                     </form>
-                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" th:object="${comment}" method="post">
+                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" th:object="${comment}" method="post" sec:authorize="hasRole('ADMIN')">
                         <button type="submit" name="action">Delete Comment</button>
                     </form>
                 </div>

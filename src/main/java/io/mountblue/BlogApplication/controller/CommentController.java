@@ -22,11 +22,13 @@ public class CommentController {
     public String postComment(
             @PathVariable("post_id") Long postId,
             @RequestParam(name = "commentId", required = false) Long commentId,
-            @RequestParam(name = "commentname") String commentName,
+            @RequestParam(name = "commentName") String commentName,
+            @RequestParam(name = "commentEmail") String commentEmail,
+            @RequestParam(name = "commentContent") String commentContent,
             Model model
     ) {
         Post post = postServiceImplementation.findPostById(postId);
-        Long id = commentServiceImplementation.setCommentsForPost(post, commentId, commentName);
+        Long id = commentServiceImplementation.setCommentsForPost(post, commentId, commentName, commentEmail, commentContent);
         postServiceImplementation.save(post);
         model.addAttribute("commentId", id);
         return "redirect:/post"+post.getId();

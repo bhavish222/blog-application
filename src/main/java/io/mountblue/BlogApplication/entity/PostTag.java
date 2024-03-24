@@ -16,18 +16,18 @@ public class PostTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    @Column(updatable = false, name = "created_at")
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onPrePersist() {
-        this.setCreatedAt(LocalDateTime.now());
-        this.setUpdatedAt(LocalDateTime.now());
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
-
     @PreUpdate
-    public void onPreUpdate() {
-        this.setUpdatedAt(LocalDateTime.now());
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     public PostTag(Post post, Tag tag, LocalDateTime createdAt, LocalDateTime updatedAt) {

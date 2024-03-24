@@ -67,6 +67,10 @@ public class PostServiceImplementation implements PostService {
 
     @Override
     public void saveOrUpdate(Post post, String tagsString, String action) {
+        if(action.equals("Publish")) {
+            post.setIs_published(true);
+            post.setPublishedAt(LocalDateTime.now());
+        }
         String[] tagNames = tagsString.split(",");
         List<Tag> newTags = new ArrayList<>();
         for (String tagName : tagNames) {
@@ -94,27 +98,25 @@ public class PostServiceImplementation implements PostService {
         post.setTags(allUniqueTagsForThisPost);
         int currentPostLength = post.getContent().length();
         String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
-
-//            post.setCreatedAt(LocalDateTime.now());
-//            post.setPublishedAt(LocalDateTime.now());
-            post.setIs_published(true);
-        User user = new User(1L, "bhavi", "wadhwabhavish46@gmail.com", "3001");
-        post.setAuthor(user);
         post.setExcerpt(excerpt);
-//        post.setUpdatedAt(LocalDateTime.now());
+        User user = new User(1L, "bhavi", "wadhwabhavish46@gmail.com", "3001");
         if (post.getId() != null) {
             Post existingPost = findPostById(post.getId());
+            post.setIs_published(true);
             if (existingPost != null) {
                 existingPost.setTitle(post.getTitle());
                 existingPost.setContent(post.getContent());
                 existingPost.setTags(post.getTags());
                 existingPost.setExcerpt(post.getExcerpt());
                 existingPost.setAuthor(post.getAuthor());
-//                existingPost.setPublishedAt(post.getPublishedAt());
-//                System.out.println(post.getPublishedAt() + "\n\n");
-                existingPost.setExcerpt(post.getExcerpt());
+                existingPost.setUpdatedAt(LocalDateTime.now());
+                existingPost.setTags(post.getTags());
+                existingPost.setAuthor(user);
+                save(existingPost);
             }
         }
+        post.setAuthor(user);
+        save(post);
     }
 
     @Override

@@ -9,11 +9,13 @@
 <body>
     <form action="#" th:action="@{/authenticateTheUser}" method="post">
         <p th:if="${param.error}" style="color: red;">invalid username or password</p>
+        <div th:if="${param.logout}"><i style="color:green">you have been logout</i></div>
         Username : <input type="text" name="username" />
         <br>
         Password : <input type="password" name="password"/>
         <br>
         <input type="submit" value="Login"/>
     </form>
+    <p>Don't have an account?</p> <a href="/signup">SignUp Here</a>
 </body>
 </html>

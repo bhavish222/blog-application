@@ -56,8 +56,6 @@ public class PostController {
         List<Post> commonPosts = searchAndSortServiceImplementation.checkForSearchedAndFiltered(searchedPosts, filteredPosts);
         Page<Post> posts =  searchAndSortServiceImplementation.sort(commonPosts, sort, pageable);
 
-        System.out.println(sort);
-
         int totalPages = (int) Math.ceil((double) posts.getTotalElements() / (double) pageSize);
         boolean hasNextPages = pageNumber < totalPages - 1;
         model.addAttribute("hasNextPage", hasNextPages);
@@ -92,8 +90,7 @@ public class PostController {
             @RequestParam("action") String action
     ) {
         postServiceImplementation.saveOrUpdate(post, tagsString, action);
-        postServiceImplementation.save(post);
-        return "redirect:/";
+        return "redirect:/post" + post.getId();
     }
     @GetMapping("/post{post_id}")
     public String showOnePost(

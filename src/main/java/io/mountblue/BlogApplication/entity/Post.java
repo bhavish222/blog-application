@@ -19,9 +19,9 @@ public class Post {
     private User author;
     @Column(name = "is_published")
     private boolean isPublished;
-    @Column(name = "published_at")
+    @Column(name = "published_at", updatable=false)
     private LocalDateTime publishedAt;
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable=false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -51,14 +51,13 @@ public class Post {
     }
 
     @PrePersist
-    public void onPrePersist() {
-        this.setCreatedAt(LocalDateTime.now());
-        this.setUpdatedAt(LocalDateTime.now());
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
-
     @PreUpdate
-    public void onPreUpdate() {
-        this.setUpdatedAt(LocalDateTime.now());
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {

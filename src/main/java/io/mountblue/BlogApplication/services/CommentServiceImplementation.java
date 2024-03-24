@@ -32,7 +32,9 @@ public class CommentServiceImplementation implements CommentService{
     public Long setCommentsForPost(
             Post post,
             Long commentId,
-            String commentName
+            String commentName,
+            String commentEmail,
+            String commentContent
     ) {
         List<Comment> listOfComment = post.getComments();
         Comment comment;
@@ -41,7 +43,9 @@ public class CommentServiceImplementation implements CommentService{
         } else {
             comment = findCommentById(commentId);
         }
-        comment.setComment(commentName);
+        comment.setName(commentName);
+        comment.setEmail(commentEmail);
+        comment.setComment(commentContent);
         listOfComment.add(comment);
         post.setComments(listOfComment);
         comment.setPost(post);
