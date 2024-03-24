@@ -5,6 +5,7 @@
     <title>
         Login
     </title>
+    <link rel="stylesheet" th:href="@{/css/loginPage.css}">
 </head>
 <body>
     <form action="#" th:action="@{/authenticateTheUser}" method="post">
@@ -16,6 +17,8 @@
         <br>
         <input type="submit" value="Login"/>
     </form>
-    <p>Don't have an account?</p> <a href="/signup">SignUp Here</a>
+    <div>
+        <p>Don't have an account?</p> <a href="/signup">SignUp Here</a>
+    </div>
 </body>
 </html>

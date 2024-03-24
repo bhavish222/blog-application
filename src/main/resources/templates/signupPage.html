@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>sign up</title>
+    <link rel="stylesheet" th:href="@{/css/signupPage.css}">
 </head>
 <body>
     <form action="#" th:action="@{/register}" method="post">
-        Name : <input type="text" name="username">
+        Name : <input type="text" name="username" required>
         <br>
-        Email : <input type="email" name="email">
+        Email : <input type="email" name="email" required>
         <br>
-        Password : <input type="password" name="password">
+        Password : <input type="password" name="password" required>
         <br>
         <input type="submit" value="Register">
     </form>
     <div th:if="${error}" style="color: red;"><span th:text="${error}"></span></div>
+
+    <div>
+        <p>Have an account?</p> <a href="/login-page">Login Here</a>
+    </div>
 </body>
 </html>

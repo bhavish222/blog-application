@@ -23,6 +23,12 @@
                 Write a Blog
             </a>
         </span>
+        <form th:action="@{/login-page}" method="post" class="login-form" th:if="${not #authorization.expression('isAuthenticated()')}">
+            <input class="btn" value="Login" type="submit">
+        </form>
+        <form th:action="@{/logout}" class="logout-form" method="post" th:if="${#authorization.expression('isAuthenticated()')}">
+            <input class="btn" value="Logout" type="submit">
+        </form>
         <form th:action="@{/}" method="get" th:object="${posts}" class="sort-by-form">
             <label for="sort">Sort by:</label>
             <select id="sort" name="sort">
@@ -48,7 +54,7 @@
             <button type="submit">Sort</button>
         </form>
     </header>
-    <hr>
+
     <main id="articles-container" class="articles-container">
         <aside class="aside-filter">
             <form th:action="@{/}" method="get">
@@ -102,8 +108,8 @@
                 <div th:each="post : ${posts}" th:value="${post}" id="post-container-div">
                     <a th:href="@{'/post' + ${post.id}}">
                         <h2 th:text="${post.title}"/>
-                        <h4 th:text="${post.author.name}"/>
-                        <h5 th:text="${post.createdAt.toLocalDate().toString()}"/>
+                        <span>Author : <h4 th:text="${post.author.name}"/></span>
+                        Created by : <h5 th:text="${post.createdAt.toLocalDate().toString()}"/>
                         <div th:text="${post.excerpt}"/>
                     </a>
                 </div>
@@ -115,8 +121,8 @@
     <form class="previous" th:action="@{/}" method="get" th:if="${pageNumber > 0}">
         <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
         <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
-        <input type="hidden" name="startDate">
-        <input type="hidden" name="endDate">
+        <input type="hidden" th:value="${startDate}" name="startDate">
+        <input type="hidden" th:value="${endDate}" name="endDate">
         <input type="hidden" name="sort" th:value="${sort}">
         <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
         <input type="hidden" name="pageNumber" th:value="${pageNumber == null or pageNumber == 0 ? 0 : pageNumber - 1}"/>
@@ -125,8 +131,8 @@
     <form class="next" th:action="@{/}" method="get" th:if="${hasNextPage}">
         <input type="hidden" name="userId" th:value="${entry}" th:if="${userId!=null && userId.contains(entry)}">
         <input type="hidden" name="tagId" th:value="${entry}" th:if="${tagId != null && tagId.contains(entry)}">
-        <input type="hidden" name="startDate">
-        <input type="hidden" name="endDate">
+        <input type="hidden" th:value="${startDate}" name="startDate">
+        <input type="hidden" th:value="${endDate}" name="endDate">
         <input type="hidden" name="sort" th:value="${sort}">
         <input type="hidden" th:value="${searchBarInput}" name="searchBarInput">
         <input type="hidden" name="pageNumber" th:value="${pageNumber == null ? 1 : pageNumber + 1}"/>

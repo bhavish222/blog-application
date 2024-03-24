@@ -35,6 +35,11 @@ public class SecurityConfig {
                                     .anyRequest()
                                     .authenticated()
                 )
+                .exceptionHandling(
+                        configurer ->
+                                configurer
+                                        .accessDeniedPage("/access-denied")
+                )
                 .formLogin(form ->
                         form.loginPage("/login-page")
                                 .loginProcessingUrl("/authenticateTheUser")
