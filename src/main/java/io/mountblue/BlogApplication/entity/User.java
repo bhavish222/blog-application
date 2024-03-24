@@ -9,11 +9,20 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "name", unique = true)
     private String name;
     private String email;
     private String password;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
 
     public User() {}
 

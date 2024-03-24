@@ -23,22 +23,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
-                        configurer ->
-                                configurer
-                                        .requestMatchers("/css/**").permitAll()
-                                        .requestMatchers("/").permitAll()
-                                        .requestMatchers("/newpost").hasAnyRole("ADMIN","AUTHOR")
-                                        .requestMatchers("/post*").permitAll()
-                                        .requestMatchers("/signup").permitAll()
-                                        .requestMatchers("/register").permitAll()
-                                        .requestMatchers("/login-page").permitAll()
-                                        .anyRequest()
-                                        .authenticated()
+                configurer ->
+                        configurer
+                                    .requestMatchers("/css/**").permitAll()
+                                    .requestMatchers("/").permitAll()
+                                    .requestMatchers("/newpost").hasAnyRole("ADMIN","AUTHOR")
+                                    .requestMatchers("/post*").permitAll()
+                                    .requestMatchers("/signup").permitAll()
+                                    .requestMatchers("/register").permitAll()
+                                    .requestMatchers("/login-page").permitAll()
+                                    .anyRequest()
+                                    .authenticated()
                 )
                 .formLogin(form ->
-                                form.loginPage("/login-page")
-                                        .loginProcessingUrl("/authenticateTheUser")
-                                        .permitAll()
+                        form.loginPage("/login-page")
+                                .loginProcessingUrl("/authenticateTheUser")
+                                .permitAll()
+                )
+                .logout(
+                        logout ->
+                                logout.permitAll()
                 );
         return http.build();
     }

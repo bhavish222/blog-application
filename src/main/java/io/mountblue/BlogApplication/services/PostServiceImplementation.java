@@ -69,9 +69,9 @@ public class PostServiceImplementation implements PostService {
 
     @Override
     public void saveOrUpdate(Post post, String tagsString, String action) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loggedInUsername = (String) authentication.getPrincipal();
-        System.out.println(loggedInUsername);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String loggedInUsername = (String) authentication.getPrincipal();
+//        System.out.println(loggedInUsername);
         if(action.equals("Publish")) {
             post.setIs_published(true);
             post.setPublishedAt(LocalDateTime.now());
