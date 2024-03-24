@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,6 +69,9 @@ public class PostServiceImplementation implements PostService {
 
     @Override
     public void saveOrUpdate(Post post, String tagsString, String action) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUsername = (String) authentication.getPrincipal();
+        System.out.println(loggedInUsername);
         if(action.equals("Publish")) {
             post.setIs_published(true);
             post.setPublishedAt(LocalDateTime.now());

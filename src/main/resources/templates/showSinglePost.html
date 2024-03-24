@@ -48,10 +48,18 @@
                 <div th:each="comment : ${post.getComments()}">
                     <span><strong th:text="${comment.getName()}"/></span>
                     <span th:text="${comment.getComment()}"/>
-                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}" th:object="${comment}" method="post" sec:authorize="hasRole('ADMIN')">
+                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}"
+                          th:if="${#authentication.principal.username eq post.author.name}"
+                          th:object="${comment}"
+                          method="post"
+                          sec:authorize="hasRole('ADMIN')">
                         <button type="submit" name="action">Update Comment</button>
                     </form>
-                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}" th:object="${comment}" method="post" sec:authorize="hasRole('ADMIN')">
+                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}"
+                          th:if="${#authentication.principal.username eq post.author.name}"
+                          th:object="${comment}"
+                          method="post"
+                          sec:authorize="hasRole('ADMIN')">
                         <button type="submit" name="action">Delete Comment</button>
                     </form>
                 </div>
