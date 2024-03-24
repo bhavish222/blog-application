@@ -25,14 +25,17 @@ public class PostServiceImplementation implements PostService {
     }
     private PostRepository postRepository;
     private TagRepository tagRepository;
+    private UserRepository userRepository;
 
     @Autowired
     public PostServiceImplementation(
             PostRepository postRepository,
-            TagRepository tagRepository
+            TagRepository tagRepository,
+            UserRepository userRepository
     ) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -69,9 +72,9 @@ public class PostServiceImplementation implements PostService {
 
     @Override
     public void saveOrUpdate(Post post, String tagsString, String action) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String loggedInUsername = (String) authentication.getPrincipal();
-//        System.out.println(loggedInUsername);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String user = authentication.getName();
+        User currentLoggedInUser = userRepository.findUserByName(user);
         if(action.equals("Publish")) {
             post.setIs_published(true);
             post.setPublishedAt(LocalDateTime.now());
@@ -104,7 +107,6 @@ public class PostServiceImplementation implements PostService {
         int currentPostLength = post.getContent().length();
         String excerpt = post.getContent().substring(0, Math.min(currentPostLength, 150));
         post.setExcerpt(excerpt);
-        User user = new User(1L, "bhavi", "wadhwabhavish46@gmail.com", "3001");
         if (post.getId() != null) {
             Post existingPost = findPostById(post.getId());
             post.setIs_published(true);
@@ -116,11 +118,11 @@ public class PostServiceImplementation implements PostService {
                 existingPost.setAuthor(post.getAuthor());
                 existingPost.setUpdatedAt(LocalDateTime.now());
                 existingPost.setTags(post.getTags());
-                existingPost.setAuthor(user);
+                existingPost.setAuthor(currentLoggedInUser);
                 save(existingPost);
             }
         }
-        post.setAuthor(user);
+        post.setAuthor(currentLoggedInUser);
         save(post);
     }
 

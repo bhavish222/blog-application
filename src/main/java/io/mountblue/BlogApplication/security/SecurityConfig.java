@@ -17,7 +17,7 @@ public class SecurityConfig {
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
         jdbcUserDetailsManager.setUsersByUsernameQuery("select name, password, enabled from user where name=?");
-        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select name, role from roles where name=?");
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select username, role from role where username=?");
         return jdbcUserDetailsManager;
     }
     @Bean

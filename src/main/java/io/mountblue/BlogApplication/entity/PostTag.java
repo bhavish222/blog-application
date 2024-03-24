@@ -24,6 +24,7 @@ public class PostTag {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        System.out.println("\n\n" + LocalDateTime.now() + "\n\n");
     }
     @PreUpdate
     protected void onUpdate() {

@@ -69,6 +69,7 @@ public class PostController {
         model.addAttribute("startDate", startDateStr);
         model.addAttribute("endDate", endDateStr);
         model.addAttribute("tagId", tagId);
+        model.addAttribute("sort", sort);
         model.addAttribute("userId", userId);
         model.addAttribute("searchBarInput", searchBarInput);
         model.addAttribute("pageNumber",pageNumber);
