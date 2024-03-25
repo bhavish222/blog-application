@@ -80,3 +80,7 @@ a {
 .btn {
     cursor: pointer;
 }
+.pagination {
+    position: absolute;
+    right: 0;
+}
