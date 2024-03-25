@@ -29,7 +29,7 @@ public class SecurityConfig {
     .authorizeHttpRequests(
                 configurer ->
                         configurer
-                                .requestMatchers("/newpost","/editpost/**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers("/newpost","/editpost/**","/postcomment/**").hasAnyRole("ADMIN","AUTHOR")
                                 .requestMatchers("/","/css/**","/post**","/signup","/register","/login-page","/api/post**").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/api/editpost/**").hasAnyRole("ADMIN","AUTHOR")
                                 .requestMatchers(HttpMethod.POST, "/api/savepost").hasAnyRole("ADMIN","AUTHOR")

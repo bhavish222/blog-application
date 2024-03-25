@@ -38,7 +38,7 @@
             <br>
             <div th:if="${#authorization.expression('isAuthenticated()')}">
                 <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post"
-                      th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}">
+                      th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')') or #authentication.principal.username eq post.author.name}">
                     Name : <input type="text" name="commentName" th:value="${post.author.name}" readonly required>
                     Email : <input type="email" name="commentEmail" th:value="${post.author.email}" readonly required>
                     comment : <input type="text" th:value="${commentContent}" name="commentContent" required>
