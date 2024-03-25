@@ -21,18 +21,20 @@
                 <span th:each="tag : ${post.tags}" th:text="${tag.name} + ', ' "  />
             </p>
 
-            <form th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')') and #authentication.principal.username eq post.author.name}"
-                    th:action="@{'/editpost/post' + ${post.id}}"
-                  method="post">
-                <button type="submit">Edit Post</button>
-            </form>
-            <br>
-            <form th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')') and #authentication.principal.username eq post.author.name}"
-                  th:action="@{'/deletepost/post' + ${post.id}}"
-                  sec:authorize="hasAnyRole('AUTHOR','ADMIN')"
-                  method="post">
-                <button type="submit">Delete Post</button>
-            </form>
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <form th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}"
+                      th:action="@{'/editpost/post' + ${post.id}}"
+                      method="post">
+                    <button type="submit">Edit Post</button>
+                </form>
+                <br>
+                <form th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}"
+                      th:action="@{'/deletepost/post' + ${post.id}}"
+                      sec:authorize="hasAnyRole('AUTHOR','ADMIN')"
+                      method="post">
+                    <button type="submit">Delete Post</button>
+                </form>
+            </div>
             <br>
             <div>
                 <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post">
@@ -47,18 +49,20 @@
                 <div th:each="comment : ${post.getComments()}">
                     <span><strong th:text="${comment.getName()}"/></span>
                     <span th:text="${comment.getComment()}"/>
-                    <form th:action="@{'/updatecomment/comment' + ${comment.id}}"
-                          th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')') and #authentication.principal.username eq post.author.name}"
-                          th:object="${comment}"
-                          method="post">
-                        <button type="submit" name="action">Update Comment</button>
-                    </form>
-                    <form th:action="@{'/deletecomment/comment' + ${comment.id}}"
-                          th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''AUTHOR'')') and #authentication.principal.username eq post.author.name}"
-                          th:object="${comment}"
-                          method="post">
-                        <button type="submit" name="action">Delete Comment</button>
-                    </form>
+                    <div th:if="${#authorization.expression('isAuthenticated()')}">
+                        <form th:action="@{'/updatecomment/comment' + ${comment.id}}"
+                              th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}"
+                              th:object="${comment}"
+                              method="post">
+                            <button type="submit" name="action">Update Comment</button>
+                        </form>
+                        <form th:action="@{'/deletecomment/comment' + ${comment.id}}"
+                              th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}"
+                              th:object="${comment}"
+                              method="post">
+                            <button type="submit" name="action">Delete Comment</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </main>

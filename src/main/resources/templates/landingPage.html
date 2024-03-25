@@ -23,7 +23,7 @@
                 Write a Blog
             </a>
         </span>
-        <form th:action="@{/login-page}" method="post" class="login-form" th:if="${not #authorization.expression('isAuthenticated()')}">
+        <form th:action="@{/login-page}" class="login-form" th:if="${not #authorization.expression('isAuthenticated()')}">
             <input class="btn" value="Login" type="submit">
         </form>
         <form th:action="@{/logout}" class="logout-form" method="post" th:if="${#authorization.expression('isAuthenticated()')}">
