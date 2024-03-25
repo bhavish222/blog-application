@@ -2,6 +2,8 @@ package io.mountblue.BlogApplication.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -22,13 +24,21 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(
+        http
+                .csrf(csrf -> csrf.disable())
+    .authorizeHttpRequests(
                 configurer ->
                         configurer
-                                    .requestMatchers("/","/css/**","/post**","/signup","/register","/login-page").permitAll()
-                                    .requestMatchers("/newpost").hasAnyRole("ADMIN","AUTHOR")
-                                    .anyRequest()
-                                    .authenticated()
+                                .requestMatchers("/newpost","/editpost/**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers("/","/css/**","/post**","/signup","/register","/login-page","/api/post**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/api/editpost/**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers(HttpMethod.POST, "/api/savepost").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers(HttpMethod.DELETE, "/api/deletepost/**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers(HttpMethod.POST, "/api/postcomment/post**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers(HttpMethod.DELETE, "/api/deletecomment/comment**").hasAnyRole("ADMIN","AUTHOR")
+                                .requestMatchers(HttpMethod.PUT, "/api/updatecomment/comment**").hasAnyRole("ADMIN","AUTHOR")
+                                .anyRequest()
+                                .authenticated()
                 )
                 .exceptionHandling(
                         configurer ->
@@ -44,6 +54,7 @@ public class SecurityConfig {
                         logout ->
                                 logout.permitAll()
                 );
+        http.httpBasic(Customizer.withDefaults());
         return http.build();
     }
 }

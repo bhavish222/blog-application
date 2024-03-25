@@ -51,4 +51,9 @@ public class CommentServiceImplementation implements CommentService{
         comment.setPost(post);
         return commentId;
     }
+
+    @Override
+    public void save(Comment newComment) {
+        commentRepository.save(newComment);
+    }
 }

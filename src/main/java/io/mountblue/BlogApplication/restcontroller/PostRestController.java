@@ -1,27 +1,34 @@
-package io.mountblue.BlogApplication.controller;
+package io.mountblue.BlogApplication.restcontroller;
 
-import io.mountblue.BlogApplication.services.*;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.entity.User;
+import io.mountblue.BlogApplication.services.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
-@Controller
-public class PostController {
+import java.util.List;
+@RestController
+@RequestMapping("/api")
+public class PostRestController {
     private PostService postService;
     private TagService tagService;
     private UserService userService;
     private PostTagService postTagService;
     private SearchAndSortService searchAndSortService;
 
-    public PostController(PostService postService, TagService tagService, UserService userService, PostTagService postTagService, SearchAndSortService searchAndSortService) {
+    public PostRestController(
+            PostService postService,
+            TagService tagService,
+            UserService userService,
+            PostTagService postTagService,
+            SearchAndSortService searchAndSortService
+    ) {
         this.postService = postService;
         this.tagService = tagService;
         this.userService = userService;
@@ -30,7 +37,7 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public String index(
+    public List<Post> index(
             @RequestParam(name = "searchBarInput", required = false) String searchBarInput,
             @RequestParam(name = "sort", defaultValue = "newest", required = false) String sort,
             @RequestParam(name = "tagId", required = false) List<Long> tagId,
@@ -64,54 +71,59 @@ public class PostController {
         model.addAttribute("userId", userId);
         model.addAttribute("searchBarInput", searchBarInput);
         model.addAttribute("pageNumber",pageNumber);
-        return "landingPage";
-    }
-
-    @GetMapping("/newpost")
-    public String newPost(
-            Model model
-    ) {
-        model.addAttribute("post", new Post());
-        return "newPost";
+        return commonPosts;
     }
 
     @PostMapping("/savepost")
-    public String saveForm(
-            @ModelAttribute("post") Post post,
-            @RequestParam("tagList") String tagsString,
-            @RequestParam("action") String action
+    public String saveForm(@RequestBody Post post
     ) {
-        postService.saveOrUpdate(post, tagsString, action);
-        return "redirect:/post" + post.getId();
-    }
-    @GetMapping("/post{post_id}")
-    public String showOnePost(
-            @PathVariable("post_id") Long id,
-            Model model
-    ) {
-        Post post = postService.findPostById(id);
-        model.addAttribute("post",post);
-        return "showSinglePost";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUser = authentication.getName();
+        User user = userService.findUserByName(loggedInUser);
+        post.setAuthor(user);
+        postService.save(post);
+        return "post saved successfully";
     }
 
-    @PostMapping("/editpost/post{post_id}")
+    @GetMapping("/post{post_id}")
+    public Post showOnePost(
+            @PathVariable("post_id") Long id
+    ) {
+        Post post = postService.findPostById(id);
+        return post;
+    }
+
+    @PutMapping("/editpost/post{post_id}")
     public String editPost(
             @PathVariable("post_id") Long id,
-            Model model
+            @RequestBody Post updatedPost
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUser = authentication.getName();
+        User user = userService.findUserByName(loggedInUser);
         Post post = postService.findPostById(id);
-        String tagsList = postService.findTagsOfPostToString(post);
-        post.setUpdatedAt(LocalDateTime.now());
-        model.addAttribute("post", post);
-        model.addAttribute("tagsList", tagsList);
-        return "newPost";
+
+        if (authentication.getAuthorities().toString().equals("ROLE_AUTHOR") && !post.getAuthor().getName().equals(loggedInUser)) {
+            return "access-denied";
+        }
+        post = updatedPost;
+        post.setAuthor(user);
+        postService.save(post);
+        return "successfully updated";
     }
 
-    @PostMapping("/deletepost/post{post_id}")
+    @DeleteMapping("/deletepost/post{post_id}")
     public String deletePost(
             @PathVariable("post_id") Long id
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUser = authentication.getName();
+        User user = userService.findUserByName(loggedInUser);
+        Post post = postService.findPostById(id);
+        if(authentication.getAuthorities().toString().equals("[ROLE_AUTHOR]") && !post.getAuthor().getName().equals(user.getName())) {
+            return "access-denied";
+        }
         postService.deletePostById(id);
-        return "redirect:/";
+        return "successfully deleted post";
     }
 }

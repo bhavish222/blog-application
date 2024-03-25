@@ -1,6 +1,10 @@
 package io.mountblue.BlogApplication.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +15,7 @@ public class PostTag {
     private Long id;
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "post_id")
+    @JsonIgnore
     private Post post;
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "tag_id")
@@ -18,18 +23,19 @@ public class PostTag {
 
     @Column(updatable = false, name = "created_at")
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        System.out.println("\n\n" + LocalDateTime.now() + "\n\n");
-    }
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        createdAt = LocalDateTime.now();
+//        updatedAt = LocalDateTime.now();
+//        System.out.println("\n\n" + LocalDateTime.now() + "\n\n");
+//    }
+//    @PreUpdate
+//    protected void onUpdate() {
+//        updatedAt = LocalDateTime.now();
+//    }
 
     public PostTag(Post post, Tag tag, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.post = post;

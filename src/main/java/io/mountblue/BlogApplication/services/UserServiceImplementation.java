@@ -43,6 +43,12 @@ public class UserServiceImplementation implements UserService{
         roleRepository.save(role);
         return true;
     }
+
+    @Override
+    public User findUserByName(String loggedInUser) {
+        return userRepository.findUserByName(loggedInUser);
+    }
+
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

@@ -36,10 +36,11 @@
                 </form>
             </div>
             <br>
-            <div>
-                <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post">
-                    Name : <input type="text" th:value="${commentName}" name="commentName" required>
-                    Email : <input type="email" th:value="${commentEmail}" name="commentEmail" required>
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <form th:action="@{'/postcomment/post' + ${post.id}}" th:object="${comment}" method="post"
+                      th:if="${#authorization.expression('hasRole(''ADMIN'')') or #authentication.principal.username eq post.author.name}">
+                    Name : <input type="text" name="commentName" th:value="${post.author.name}" readonly required>
+                    Email : <input type="email" name="commentEmail" th:value="${post.author.email}" readonly required>
                     comment : <input type="text" th:value="${commentContent}" name="commentContent" required>
                     <input type="hidden" name="commentId" th:value="${commentId}">
                     <input type="submit" name="action" value="Comment">

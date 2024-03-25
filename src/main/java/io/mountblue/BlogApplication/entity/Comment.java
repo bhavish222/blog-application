@@ -1,4 +1,5 @@
 package io.mountblue.BlogApplication.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ public class Comment {
     private String comment;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = "post_id")
+    @JsonIgnore
     private Post post;
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
