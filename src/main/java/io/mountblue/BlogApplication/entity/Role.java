@@ -13,7 +13,6 @@ public class Role {
     private Long roleId;
     private String role;
     private String username;
-
     public Role() {
 
     }
