@@ -2,6 +2,7 @@ package io.mountblue.BlogApplication.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
@@ -12,13 +13,15 @@ public class User {
     private Long id;
     @Column(name = "name", unique = true)
     private String name;
+    @Column(name = "email", unique = true)
     private String email;
     private String password;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Post> posts;
 
-    public User() {}
+    public User() {
+    }
 
     public User(Long id, String name, String email, String password) {
         this.id = id;

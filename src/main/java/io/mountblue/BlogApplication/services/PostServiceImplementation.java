@@ -127,19 +127,41 @@ public class PostServiceImplementation implements PostService {
     }
 
     @Override
-    public List<Post> findPostsByAuthorIn(List<Long> userList) {
-        return postRepository.findPostsByAuthorIdIn(userList);
+    public String deletePostByIdForRest(Long id) {
+        String loggedInUser = findLoggedInUser();
+        String authoritiesForUser = findAuthoritiesForUser();
+        User user = userRepository.findUserByName(loggedInUser);
+        Post post = postRepository.findPostById(id);
+        if(authoritiesForUser.equals("[ROLE_AUTHOR]") && !post.getAuthor().getName().equals(user.getName())) {
+            return "access-denied";
+        }
+        deletePostById(id);
+        return "successfully deleted post";
     }
 
     @Override
-    public List<Post> findPostsByPublishedAtDateRange(String startDateStr, String endDateStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        System.out.println(startDateStr + "\n\n\n" + endDateStr + "\n\n\n");
-        LocalDate start = LocalDate.parse(startDateStr, formatter);
-        LocalDate end = LocalDate.parse(endDateStr, formatter);
+    public String updatePostByIdForRest(Long id, Post updatedPost) {
+        String loggedInUser = findLoggedInUser();
+        String authoritiesForUser = findAuthoritiesForUser();
+        User user = userRepository.findUserByName(loggedInUser);
+        Post post = postRepository.findPostById(id);
+        if (authoritiesForUser.equals("[ROLE_AUTHOR]") && !post.getAuthor().getName().equals(loggedInUser)) {
+            return "access-denied";
+        }
+        post = updatedPost;
+        post.setAuthor(user);
+        save(post);
+        return "successfully updated";
+    }
 
-        LocalDateTime startDate = start.atStartOfDay();
-        LocalDateTime endDate = end.atStartOfDay();
-        return postRepository.findPostsByPublishedAtDateRange(startDate, endDate);
+
+    private String findAuthoritiesForUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().toString();
+    }
+
+    private String findLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }

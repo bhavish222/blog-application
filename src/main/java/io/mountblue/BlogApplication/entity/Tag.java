@@ -1,6 +1,7 @@
 package io.mountblue.BlogApplication.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,6 +15,7 @@ public class Tag {
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -25,7 +27,8 @@ public class Tag {
         updatedAt = LocalDateTime.now();
     }
 
-    public Tag() {}
+    public Tag() {
+    }
 
     public Tag(Long id, String name) {
         this.id = id;

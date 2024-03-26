@@ -19,9 +19,9 @@ public class Post {
     private User author;
     @Column(name = "is_published")
     private boolean isPublished;
-    @Column(name = "published_at", updatable=false)
+    @Column(name = "published_at", updatable = false)
     private LocalDateTime publishedAt;
-    @Column(name = "created_at", updatable=false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -34,7 +34,9 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
-    public Post() {}
+
+    public Post() {
+    }
 
     public Post(Long id, String title, String excerpt, String content, User author, boolean is_published, LocalDateTime publishedAt, LocalDateTime createdAt, LocalDateTime updatedAt, List<Comment> comments, List<Tag> tags) {
         this.id = id;
@@ -55,6 +57,7 @@ public class Post {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
@@ -147,6 +150,7 @@ public class Post {
     public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
+
     @Override
     public String toString() {
         return "Post{" +

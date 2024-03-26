@@ -22,7 +22,8 @@ import java.util.List;
 
 @Service
 public class SearchAndSortServiceImplementation implements SearchAndSortService {
-    public SearchAndSortServiceImplementation() {}
+    public SearchAndSortServiceImplementation() {
+    }
 
     private PostRepository postRepository;
     private PostTagRepository postTagRepository;
@@ -42,18 +43,18 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
     @Override
     public List<Post> toFindAllPostsForSearch(List<Post> allPostsList, String searchBarInput) {
         List<Post> filteredPostBasedOnSearch = new ArrayList<>();
-        for(Post post : allPostsList) {
-            if(post.getTitle().toLowerCase().contains(searchBarInput.toLowerCase())) {
+        for (Post post : allPostsList) {
+            if (post.getTitle().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
-            if(post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
+            if (post.getContent().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
-            if(post.getAuthor().getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
+            if (post.getAuthor().getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
                 filteredPostBasedOnSearch.add(post);
             }
-            for(Tag tag : post.getTags()) {
-                if(tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
+            for (Tag tag : post.getTags()) {
+                if (tag.getName().toLowerCase().contains(searchBarInput.toLowerCase())) {
                     filteredPostBasedOnSearch.add(post);
                     break;
                 }
@@ -75,10 +76,9 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
     @Override
     public List<Post> searchPostBySearchBarInput(String searchBarInput) {
         List<Post> searchedPosts = postRepository.findAll();
-        if(searchBarInput != null && !searchBarInput.isEmpty()) {
+        if (searchBarInput != null && !searchBarInput.isEmpty()) {
             searchedPosts = toFindAllPostsForSearch(searchedPosts, searchBarInput);
-        }
-        else {
+        } else {
             searchedPosts = postRepository.findAll();
         }
         return searchedPosts;
@@ -86,7 +86,7 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
 
     @Override
     public List<Post> filteredByPosts(String startDateStr, String endDateStr, List<Long> tagId, List<Long> userId) {
-        if(startDateStr == null) {
+        if (startDateStr == null) {
             startDateStr = "";
             endDateStr = "";
         }
@@ -94,10 +94,10 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
         List<Post> postsForUser = new ArrayList<>();
         List<Post> postsForDate = new ArrayList<>();
 
-        if(tagId != null) {
+        if (tagId != null) {
             postsForTags = postTagRepository.findPostIdsByTagIds(tagId);
         }
-        if(userId != null) {
+        if (userId != null) {
             List<User> authorList = userRepository.findAuthorByIdIn(userId);
             postsForUser = postRepository.findPostsByAuthorIn(authorList);
         }
@@ -116,14 +116,13 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
     @Override
     public List<Post> checkForSearchedAndFiltered(List<Post> searchedPosts, List<Post> filteredPosts) {
         List<Post> commonPosts = new ArrayList<>();
-        if(!filteredPosts.isEmpty()) {
-            for(Post post : searchedPosts) {
-                if(filteredPosts.contains(post)) {
+        if (!filteredPosts.isEmpty()) {
+            for (Post post : searchedPosts) {
+                if (filteredPosts.contains(post)) {
                     commonPosts.add(post);
                 }
             }
-        }
-        else {
+        } else {
             commonPosts = searchedPosts;
         }
         return commonPosts;
@@ -132,10 +131,9 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
     @Override
     public Page<Post> sort(List<Post> commonPosts, String sort, Pageable pageable) {
         Page<Post> sortedPosts;
-        if(sort.equals("newest")) {
+        if (sort.equals("newest")) {
             sortedPosts = postRepository.findPostsInAndOrderByPublishedAtDesc(commonPosts, pageable);
-        }
-        else {
+        } else {
             sortedPosts = postRepository.findPostsInAndOrderByPublishedAtAsc(commonPosts, pageable);
         }
         return sortedPosts;

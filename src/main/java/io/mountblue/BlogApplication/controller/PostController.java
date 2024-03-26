@@ -1,15 +1,15 @@
 package io.mountblue.BlogApplication.controller;
 
+import org.springframework.data.domain.PageRequest;
 import io.mountblue.BlogApplication.services.*;
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
 import io.mountblue.BlogApplication.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.ui.Model;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +21,13 @@ public class PostController {
     private PostTagService postTagService;
     private SearchAndSortService searchAndSortService;
 
-    public PostController(PostService postService, TagService tagService, UserService userService, PostTagService postTagService, SearchAndSortService searchAndSortService) {
+    public PostController(
+            PostService postService,
+            TagService tagService,
+            UserService userService,
+            PostTagService postTagService,
+            SearchAndSortService searchAndSortService
+    ) {
         this.postService = postService;
         this.tagService = tagService;
         this.userService = userService;

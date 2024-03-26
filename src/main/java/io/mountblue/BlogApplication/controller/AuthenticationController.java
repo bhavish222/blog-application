@@ -1,16 +1,14 @@
 package io.mountblue.BlogApplication.controller;
 
 import io.mountblue.BlogApplication.services.UserService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 @Controller
 public class AuthenticationController {
     private UserService userService;
-
     public AuthenticationController(UserService userService) {
         this.userService = userService;
     }
@@ -18,11 +16,13 @@ public class AuthenticationController {
     @GetMapping("/login-page")
     public String loginPage() {
         return "loginPage";
-    }
+}
+
     @GetMapping("/signup")
     public String signup() {
         return "signupPage";
     }
+
     @PostMapping("/register")
     public String register(
             @RequestParam(name = "username") String name,

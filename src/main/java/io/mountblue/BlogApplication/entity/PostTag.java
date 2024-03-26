@@ -26,17 +26,6 @@ public class PostTag {
 
     private LocalDateTime updatedAt;
 
-//    @PrePersist
-//    protected void onCreate() {
-//        createdAt = LocalDateTime.now();
-//        updatedAt = LocalDateTime.now();
-//        System.out.println("\n\n" + LocalDateTime.now() + "\n\n");
-//    }
-//    @PreUpdate
-//    protected void onUpdate() {
-//        updatedAt = LocalDateTime.now();
-//    }
-
     public PostTag(Post post, Tag tag, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.post = post;
         this.tag = tag;
@@ -44,7 +33,8 @@ public class PostTag {
         this.updatedAt = updatedAt;
     }
 
-    public PostTag() {}
+    public PostTag() {
+    }
 
     public Long getId() {
         return id;

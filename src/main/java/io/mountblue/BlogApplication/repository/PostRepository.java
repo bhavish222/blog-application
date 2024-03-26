@@ -8,12 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Post findPostById(Long id);
+
     @Query("SELECT p FROM Post p WHERE p IN :posts ORDER BY p.publishedAt DESC")
     Page<Post> findPostsInAndOrderByPublishedAtDesc(
             @Param("posts") List<Post> posts,

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TagServiceImplementation implements TagService{
+public class TagServiceImplementation implements TagService {
 
     private TagRepository tagRepository;
 

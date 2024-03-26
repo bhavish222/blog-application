@@ -89,8 +89,7 @@ public class PostRestController {
     public Post showOnePost(
             @PathVariable("post_id") Long id
     ) {
-        Post post = postService.findPostById(id);
-        return post;
+        return postService.findPostById(id);
     }
 
     @PutMapping("/editpost/post{post_id}")
@@ -98,32 +97,13 @@ public class PostRestController {
             @PathVariable("post_id") Long id,
             @RequestBody Post updatedPost
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loggedInUser = authentication.getName();
-        User user = userService.findUserByName(loggedInUser);
-        Post post = postService.findPostById(id);
-
-        if (authentication.getAuthorities().toString().equals("ROLE_AUTHOR") && !post.getAuthor().getName().equals(loggedInUser)) {
-            return "access-denied";
-        }
-        post = updatedPost;
-        post.setAuthor(user);
-        postService.save(post);
-        return "successfully updated";
+        return postService.updatePostByIdForRest(id, updatedPost);
     }
 
     @DeleteMapping("/deletepost/post{post_id}")
     public String deletePost(
             @PathVariable("post_id") Long id
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loggedInUser = authentication.getName();
-        User user = userService.findUserByName(loggedInUser);
-        Post post = postService.findPostById(id);
-        if(authentication.getAuthorities().toString().equals("[ROLE_AUTHOR]") && !post.getAuthor().getName().equals(user.getName())) {
-            return "access-denied";
-        }
-        postService.deletePostById(id);
-        return "successfully deleted post";
+        return postService.deletePostByIdForRest(id);
     }
 }
