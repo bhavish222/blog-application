@@ -36,7 +36,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("endDate") LocalDateTime endDate
     );
 
-    List<Post> findAllPostsByIdIn(
-            List<Long> postsIdList
-    );
+    List<Post> findPostsByAuthorIn(List<User> authorList);
 }

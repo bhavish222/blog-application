@@ -2,9 +2,11 @@ package io.mountblue.BlogApplication.services;
 
 import io.mountblue.BlogApplication.entity.Post;
 import io.mountblue.BlogApplication.entity.Tag;
+import io.mountblue.BlogApplication.entity.User;
 import io.mountblue.BlogApplication.repository.PostRepository;
 import io.mountblue.BlogApplication.repository.PostTagRepository;
 import io.mountblue.BlogApplication.repository.TagRepository;
+import io.mountblue.BlogApplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,14 +26,17 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
 
     private PostRepository postRepository;
     private PostTagRepository postTagRepository;
+    private UserRepository userRepository;
 
     @Autowired
     public SearchAndSortServiceImplementation(
             PostRepository postRepository,
-            PostTagRepository postTagRepository
+            PostTagRepository postTagRepository,
+            UserRepository userRepository
     ) {
         this.postRepository = postRepository;
         this.postTagRepository = postTagRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -63,6 +68,7 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
         uniquePosts.addAll(postsForTags);
         uniquePosts.addAll(postsForUser);
         uniquePosts.addAll(postsForDate);
+        System.out.println(uniquePosts);
         return new ArrayList<Post>(uniquePosts);
     }
 
@@ -92,7 +98,8 @@ public class SearchAndSortServiceImplementation implements SearchAndSortService 
             postsForTags = postTagRepository.findPostIdsByTagIds(tagId);
         }
         if(userId != null) {
-            postsForUser = postRepository.findPostsByAuthorIdIn(userId);
+            List<User> authorList = userRepository.findAuthorByIdIn(userId);
+            postsForUser = postRepository.findPostsByAuthorIn(authorList);
         }
         if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthenticationController {
-
-//    private UserServiceImplementation userService;
     private UserService userService;
 
     public AuthenticationController(UserService userService) {
